@@ -475,11 +475,6 @@ BitBoardS&  BitBoardS::erase_bit (const BitBoardS& rhs ){
 return *this;
 }
 
-
-
-
-
-
 BitBoardS& BitBoardS::operator &= (const BitBoardS& rhs){
 ///////////////////
 // AND mask in place
@@ -496,7 +491,17 @@ BitBoardS& BitBoardS::operator &= (const BitBoardS& rhs){
 		}
 
 		//update before either of the bitstrings has reached its end
-		if(m_aBB[i1].index==rhs.m_aBB[i2].index){
+		if(m_aBB[i1].index<rhs.m_aBB[i2].index){
+			m_aBB[i1].bb=0;
+			i1++;
+		}else if (rhs.m_aBB[i2].index<m_aBB[i1].index){
+			i2++;
+		}else{
+			m_aBB[i1].bb &= rhs.m_aBB[i2].bb;
+			i1++, i2++; 
+		}
+
+		/*if(m_aBB[i1].index==rhs.m_aBB[i2].index){
 			m_aBB[i1].bb &= rhs.m_aBB[i2].bb;
 			i1++, i2++; 
 		}else if(m_aBB[i1].index<rhs.m_aBB[i2].index){
@@ -504,11 +509,40 @@ BitBoardS& BitBoardS::operator &= (const BitBoardS& rhs){
 			i1++;
 		}else if(rhs.m_aBB[i2].index<m_aBB[i1].index){
 			i2++;
+		}*/
+	}
+
+return *this;
+}
+
+BitBoardS& BitBoardS::operator |= (const BitBoardS& rhs){
+///////////////////
+// OR mask in place
+// date:10/02/2015
+// last_update: 10/02/2015
+
+	int i1=0, i2=0;
+	while(true){
+		//exit conditions 
+		if(i1==m_aBB.size() || i2==rhs.m_aBB.size() ){				//size should be the same
+					return *this;
+		}
+
+		//update before either of the bitstrings has reached its end
+		if(m_aBB[i1].index<rhs.m_aBB[i2].index){
+			i1++;
+		}else if(rhs.m_aBB[i2].index<m_aBB[i1].index){
+			i2++;
+		}else{
+			m_aBB[i1].bb |= rhs.m_aBB[i2].bb;
+			i1++, i2++; 
 		}
 	}
 
 return *this;
 }
+
+
 
 BITBOARD BitBoardS::find_bitboard (int block_index) const{
 ///////////////////

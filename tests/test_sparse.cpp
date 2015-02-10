@@ -57,6 +57,27 @@ TEST(Sparse, basics) {
 	EXPECT_EQ(0x01, bbsp.find_bitboard(WDIV(64)));
 }
 
+TEST(Sparse, member_masks) {
+	BitBoardS lhs;
+	lhs.init(200);
+	lhs.set_bit(63);
+	lhs.set_bit(126);
+	lhs.set_bit(189);	
+	
+	BitBoardS rhs;
+	rhs.init(200);
+	rhs.set_bit(63);
+	rhs.set_bit(127);
+	
+	lhs.AND_EQ(1,rhs);
+	EXPECT_TRUE(lhs.popcn64()==1);
+	EXPECT_TRUE(lhs.is_bit(63));
+
+	lhs.OR_EQ(1,rhs);
+	EXPECT_TRUE(lhs.is_bit(127));
+	EXPECT_TRUE(lhs.popcn64(), 2);
+} 
+
 TEST(Sparse_intrinsic, basics_2) {
 	//sparse 
 	BBIntrinS bbsp(130);
@@ -65,7 +86,7 @@ TEST(Sparse_intrinsic, basics_2) {
 	bbsp.set_bit(64);
 
 	
-	EXPECT_TRUE(bbsp.is_bit(10));
+	(bbsp.is_bit(10));
 	EXPECT_TRUE(bbsp.is_bit(20));
 	EXPECT_TRUE(bbsp.is_bit(64));
 	EXPECT_FALSE(bbsp.is_bit(63));

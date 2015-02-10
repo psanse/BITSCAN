@@ -146,17 +146,17 @@ BitBoardS&    erase_block			(int first_block, const BitBoardS& rhs );
 BitBoardS&    erase_block			(int first_block, int last_block, const BitBoardS& rhs );
 BitBoardS&    erase_block_pos		(int first_pos_of_block, const BitBoardS& rhs );
 
-//(AND operations in range)
-inline BitBoardS&    AND_EQ			(int first_block, const BitBoardS& rhs );				
-
 ////////////////////////
 //Operators 
- BitBoardS& operator &=				(const BitBoardS& );												//set intersection in place		
-		
+ BitBoardS& operator &=				(const BitBoardS& );					
+ BitBoardS& operator |=				(const BitBoardS& );
+ BitBoardS& AND_EQ					(int first_block, const BitBoardS& rhs );	//in range
+ BitBoardS& OR_EQ					(int first_block, const BitBoardS& rhs );	//in range
+  		
 /////////////////////////////
 //Boolean functions
-inline	bool is_bit					(int nbit)				const;			//nbit is 0 based
-inline	bool is_empty				()						const;			//lax: considers empty blocks for emptyness
+inline	bool is_bit					(int nbit)				const;				//nbit is 0 based
+inline	bool is_empty				()						const;				//lax: considers empty blocks for emptyness
 		bool is_disjoint			(const BitBoardS& bb)   const;
 /////////////////////
 // I/O 
@@ -619,8 +619,6 @@ BitBoardS&  BitBoardS::erase_block (int first_block, const BitBoardS& rhs ){
 	//optimization based on the size of rhs being greater
 	//for (int i1 = 0; i1 < lhs.m_aBB.size();i1++){
 
-
-
 	//iteration
 	while( ! ( p1.second==m_aBB.end() ||  p2.second==rhs.m_aBB.end() ) ){
 		////exit condition I
@@ -652,7 +650,7 @@ BitBoardS&  BitBoardS::AND_EQ(int first_block, const BitBoardS& rhs ){
 	pair<bool, BitBoardS::velem_cit> p2=rhs.find_block(first_block);
 	
 	//optimization based on the size of rhs being greater
-	//for (int i1 = 0; i1 < lhs.m_aBB.size();i1++){
+	//for (int i1 = 0; i1 < lhs.m_aBB.size();i1++){...}
 
 	//iteration
 	while( true ){
@@ -680,6 +678,35 @@ BitBoardS&  BitBoardS::AND_EQ(int first_block, const BitBoardS& rhs ){
 	
 return *this;
 }
+
+inline
+BitBoardS&  BitBoardS::OR_EQ(int first_block, const BitBoardS& rhs ){
+//////////////////////
+// left union (OR). Bits in rhs are added starting from closed range [first_block, END[
+
+	pair<bool, BitBoardS::velem_it> p1=find_block(first_block);
+	pair<bool, BitBoardS::velem_cit> p2=rhs.find_block(first_block);
+	
+	//iteration
+	while(true){
+		//exit condition 
+		if(p1.second==m_aBB.end() || p2.second==rhs.m_aBB.end() ){				//size should be the same
+					return *this;
+		}
+
+		//update before either of the bitstrings has reached its end
+		if(p1.second->index<p2.second->index){
+			++p1.second;
+		}else if(p2.second->index<p1.second->index){
+			++p2.second;
+		}else{
+			p1.second->bb|=p2.second->bb;
+			++p1.second, ++p2.second; 
+		}
+	}
+	
+return *this;
+ }
 
 
 inline

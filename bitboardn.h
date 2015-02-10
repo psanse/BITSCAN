@@ -75,13 +75,13 @@ inline int msbn64		()							const;		//lookup
 inline int lsbn64		()							const; 		//de Bruijn	/ lookup								
 
 	//for looping (does not use state info)	
-inline int next_bit			(int nBit)	const;			//de Bruijn
-inline int next_bit_if_del	(int nBit)	const;			//de Bruijn
-inline int previous_bit		(int nbit)	const;			//lookup 
+inline int next_bit			(int nBit)	const;					//de Bruijn
+inline int next_bit_if_del	(int nBit)	const;					//de Bruijn
+inline int previous_bit		(int nbit)	const;					//lookup 
 	
 /////////////////
 // Popcount
-virtual	inline int popcn64	()						const;			//lookup 
+virtual	inline int popcn64	()						const;		//lookup 
 		inline int popcn64	(int nBit/* 0 based*/)	const;
 /////////////////////
 //Set/Delete Bits 
@@ -100,31 +100,23 @@ inline void  set_bit				();
 inline void  erase_bit				(int nbit);
 inline int   erase_bit				(int low, int high);
 inline void  erase_bit				();
-	BitBoardN& erase_bit			(const BitBoardN& bb_del);
+	BitBoardN& erase_bit			(const BitBoardN& bb_del);										//equivalent to set_difference
 
-	BitBoardN& erase_block			(int first_block, const BitBoardN& bb_del);
-	BitBoardN& erase_block			(int first_block, int last_block, const BitBoardN& bb_del);
+	BitBoardN& erase_block			(int first_block, const BitBoardN& bb_del);						//range versions
+	BitBoardN& erase_block			(int first_block, int last_block, const BitBoardN& bb_del);		//range versions
 	
-	//slice
-	/*inline void copy_bitstring_right	(int nbit,const BitBoardN& bba_copy);
-	inline void copy_bitstring_left		(int nbit,const BitBoardN& bba_copy);		
-	void add_bitstring_left				(int nbit,const BitBoardN& bba_copy);		
-	void add_bitstring_left				();	*/
-
-
+	
 ////////////////////////
 //Masking Operators (only for same block size)
 				
 	BitBoardN& operator &=	(const BitBoardN& );			//Equivalent to set_intersection
 	BitBoardN& operator |=	(const BitBoardN& );			//Equivalente to set_union
-	BitBoardN& operator ^=	(const BitBoardN& );			//Equivalente to set_ difference
-	
-	//set operations (will not resize)
-	BitBoardN& flip								();
-	BitBoardN& bitset_union						(const BitBoardN& );
-	BitBoardN& bitset_difference				(const BitBoardN& );
-	BitBoardN& bitset_symmetric_difference		(const BitBoardN& );
-	BitBoardN& bitset_intersection				(const BitBoardN& );
+	BitBoardN& operator ^=	(const BitBoardN& );			//Equivalente to set_symmetric_difference
+
+	BitBoardN&  AND_EQ		(int first_block, const BitBoardN& rhs );	//in range
+	BitBoardN&  OR_EQ		(int first_block, const BitBoardN& rhs );	//in range
+		
+	BitBoardN& flip			();
 
 /////////////////////////////
 //Boolean functions
@@ -171,44 +163,6 @@ inline int BitBoardN::msbn64() const{
 return EMPTY_ELEM;		//should not reach here
 }
 
-//inline void BitBoardN::copy_bitstring_left	(int nbit/*0 based*/, const BitBoardN& bbn){
-////////////////////////////////
-//// copies upper bits from and excluding nBit 
-//
-//	int index=WDIV(nbit);
-//	for(int i=index; i<m_nBB; i++)
-//				m_aBB[i] = bbn.m_aBB[i];
-//	
-//	//trim Left
-//	m_aBB[index] &= Tables::mask_left[nbit-WMUL(index)];
-//}
-//
-//inline void BitBoardN::copy_bitstring_right (int nbit/* 0 based*/, const BitBoardN& bbn){
-////////////////////////////////
-//// copies lower bits from and excluding nBit 
-//
-//	int index=WDIV(nbit);
-//	for(int i=0; i<=index; i++)
-//			m_aBB[i] = bbn.m_aBB[i];
-//	
-//	//trim Right
-//	m_aBB[index] &= Tables::mask_right[nbit-WMUL(index)];
-//}
-//
-//inline void BitBoardN::add_bitstring_left	(int nbit, const BitBoardN& bbn){
-////////////////////////////////
-//// adds lower bits from and excluding nBit
-////
-//	int index=WDIV(nbit);
-//	BITBOARD bb_min=bbn.m_aBB[index];
-//
-//	for(int i=index+1; i<m_nBB; i++)
-//				m_aBB[i] |= bbn.m_aBB[i];
-//	
-//	//trim Left
-//	bb_min &= Tables::mask_left[nbit-WMUL(index)];
-//	m_aBB[index] |= bb_min;
-//}
 
 inline int BitBoardN::next_bit(int nBit/* 0 based*/) const{
 ////////////////////////////

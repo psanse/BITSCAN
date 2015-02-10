@@ -189,13 +189,6 @@ void BitBoardN::init(int popsize, bool reset){
 return ;
 }
 
-///////////////////////////////
-//
-// PopCount Functions
-//
-//
-////////////////////////////////
-
 
 BitBoardN& BitBoardN::erase_bit (const BitBoardN& bbn){
 //////////////////////////////
@@ -260,40 +253,32 @@ BitBoardN& BitBoardN::operator |=	(const BitBoardN& bbn){
 return *this;
 }
 
+BitBoardN&  BitBoardN::AND_EQ (int first_block, const BitBoardN& rhs ){
+//////////////////////
+// mask in range [first_block , END[
+	for(int i=first_block; i<m_nBB; i++)
+				m_aBB[i]&=rhs.m_aBB[i];
+return *this;
+}
+
+
+BitBoardN&  BitBoardN::OR_EQ (int first_block, const BitBoardN& rhs ){
+//////////////////////
+// mask in range [first_block , END[
+
+	for(int i=first_block; i<m_nBB; i++)
+				m_aBB[i]|=rhs.m_aBB[i];
+return *this;
+}
+
+
+
 BitBoardN& BitBoardN::operator ^=	(const BitBoardN& bbn){
 	for(int i=0; i<m_nBB; i++)
 				m_aBB[i]^=bbn.m_aBB[i];
 return *this;
 }
 
-
-BitBoardN& BitBoardN::bitset_union (const BitBoardN& bbn){
-	for(int i=0; i<m_nBB; i++)
-				m_aBB[i]|=bbn.m_aBB[i];
-return *this;
-}
-
-BitBoardN& BitBoardN::bitset_intersection (const BitBoardN& bbn){
-	for(int i=0; i<m_nBB; i++)
-				m_aBB[i]&=bbn.m_aBB[i];
-return *this;
-}
-
-BitBoardN& BitBoardN::bitset_difference (const BitBoardN& bbn){
-/////////////////////////
-// Removes from current instance bits to 1 in bbn
-	for(int i=0; i<m_nBB; i++)
-				m_aBB[i]&=~bbn.m_aBB[i];
-return *this;
-}
-
-BitBoardN& BitBoardN::bitset_symmetric_difference (const BitBoardN& bbn){
-/////////////////////////
-// Current instance has elements which are only in one of the sets
-	for(int i=0; i<m_nBB; i++)
-				m_aBB[i]^=bbn.m_aBB[i];
-return *this;
-}
 
 BitBoardN& BitBoardN::flip	(){
 	for(int i=0; i<m_nBB; i++)
