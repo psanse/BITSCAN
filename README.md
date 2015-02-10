@@ -1,3 +1,6 @@
+[![Build Status](https://webapi.biicode.com/v1/badges/pablodev/pablodev/bitscan/master)](https://www.biicode.com/pablodev/bitscan) 
+
+
 BITSCAN
 ===================
 BITSCAN is a C++ 64-bit library which manipulates bit arrays (alias bit strings, bit sets etc.) and is specifically oriented for fast bitscanning operations. BITSCAN is the result of years of research in combinatorial optimization problems and has been shown very useful when modelling sets. In this type of models a bit string represents the population and members belonging to the set are marked as a 1-bit and referred by the position in the bitstrig.
