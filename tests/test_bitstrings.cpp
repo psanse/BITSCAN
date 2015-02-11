@@ -547,6 +547,27 @@ TEST(Bitstrings, init_bit_range){
 	bb2.init_bit(129);					//this is the only one that counts
 	EXPECT_TRUE(bb2.is_bit(129));
 	EXPECT_EQ(1, bb2.popcn64());
+
+//copy a bitstring in range (change names)
+	BitBoardN bb3(130);
+	bb3.set_bit(50);
+	bb3.set_bit(80);
+
+	bb.init_bit(79,bb3);
+	EXPECT_TRUE(bb.is_bit(50));
+	EXPECT_FALSE(bb.is_bit(80));
+	EXPECT_EQ(1, bb.popcn64());
+	
+	bb.init_bit(80,bb3);
+	EXPECT_EQ(2, bb.popcn64());
+
+	bb.init_bit(80,bb3);
+	EXPECT_EQ(2, bb.popcn64());
+
+	bb.erase_bit();
+	bb.init_bit(49,bb3);
+	EXPECT_TRUE(bb.is_empty());
+
 }
 
 TEST(Bitstrings, block_copying){

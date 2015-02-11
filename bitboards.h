@@ -830,7 +830,7 @@ int BitBoardS::init_bit (int high, const BitBoardS& bb_add){
 			copy(bb_add.begin(), p.second, insert_iterator<velem>(m_aBB,m_aBB.begin()));
 			m_aBB.push_back(elem(bbh, p.second->bb & ~Tables::mask_left[high-WMUL(bbh)]));
 		}else{
-			copy(bb_add.begin(), ++p.second,insert_iterator<velem>(m_aBB,m_aBB.begin()));
+			copy(bb_add.begin(), ++p.second, insert_iterator<velem>(m_aBB,m_aBB.begin()));
 		}
 	}
 return 0;

@@ -87,7 +87,7 @@ virtual	inline int popcn64	()						const;		//lookup
 //Set/Delete Bits 
 inline	void  init_bit				(int nbit);	
 inline	int   init_bit				(int lbit, int rbit);
-		int   init_bit				(int last_bit, const BitBoardS& bb_add);						//copies up to last_bit included
+		int   init_bit				(int high, const BitBoardN& bb_add);						    //copies bb_add in range [0, high] *** rename probably
 inline	void  copy_from_block		(int first_block, const BitBoardN& bb_add);						//copies from first_block (included) onwards
 inline	void  copy_up_to_block		(int last_block, const BitBoardN& bb_add);						//copies up to last_block (included)
 inline void  set_bit				(int nbit);
@@ -325,9 +325,24 @@ inline int BitBoardN::init_bit(int low, int high){
 	return 0;
 }
 
-int BitBoardN::init_bit (int last_bit, const BitBoardS& bb_add){
-	//***	
-	return 0;
+inline
+int BitBoardN::init_bit (int high, const BitBoardN& bb_add){
+//////////////////////////////////
+// fast copying of bb_add up to, and including, high bit
+
+	int bbh= WDIV(high);
+
+	//***checks consistency (***use ASSERT)
+
+	for(int i=0; i<=bbh; i++){
+		m_aBB[i]=bb_add.m_aBB[i];
+	}
+
+	//trim last bit block up to high
+	m_aBB[bbh]&=BitBoard::MASK_1(0, high-WMUL(bbh)); 
+
+
+return 0;
 }
 
 inline void BitBoardN::copy_from_block (int first_block, const BitBoardN& bb_add){
