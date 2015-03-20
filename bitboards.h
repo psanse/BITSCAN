@@ -500,6 +500,9 @@ BitBoardS& AND (const BitBoardS& lhs, const BitBoardS& rhs,  BitBoardS& res){
 	int i2=0;
 	res.erase_bit();					//experimental (and simplest solution)
 	const int MAX=rhs.m_aBB.size()-1;
+
+	//empty check of rhs required, the way it is implemented
+	if(MAX==EMPTY_ELEM) return res;
 	
 	//optimization which works if lhs has less 1-bits than rhs
 	for (int i1 = 0; i1 < lhs.m_aBB.size();i1++){
