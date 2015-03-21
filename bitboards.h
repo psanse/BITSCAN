@@ -265,8 +265,7 @@ bool BitBoardS::is_disjoint	(int first_block, int last_block, const BitBoardS& r
 
 	//main loop
 	int nElem=this->m_aBB.size(); int nElem_rhs=rhs.m_aBB.size();
-	//while(! ((i1>=nElem || this->m_aBB[i1].index>last_block ) || (i2>=nElem_rhs || rhs.m_aBB[i2].index>last_block )) ){
-	while( (i1<nElem && this->m_aBB[i1].index<=last_block ) || (i2<nElem && rhs.m_aBB[i2].index<=last_block ) ){
+	while(! ((i1>=nElem || this->m_aBB[i1].index>last_block ) || (i2>=nElem_rhs || rhs.m_aBB[i2].index>last_block )) ){
 
 		//update before either of the bitstrings has reached its end
 		if(this->m_aBB[i1].index<rhs.m_aBB[i2].index){
@@ -648,8 +647,9 @@ BitBoardS& AND (int first_block, int last_block, const BitBoardS& lhs, const Bit
 	}
 
 
-	//main loop			
-	while(! ((lhs.m_aBB[i1].index>last_block) || (rhs.m_aBB[i2].index>last_block)) ){
+	//main loop	
+	int nElem_lhs=lhs.m_aBB.size(); int nElem_rhs=rhs.m_aBB.size();
+	while(! ((i1>=nElem_lhs|| lhs.m_aBB[i1].index>last_block) || (i2>=nElem_rhs || rhs.m_aBB[i2].index>last_block)) ){
 			
 		//update before either of the bitstrings has reached its end
 		if(lhs.m_aBB[i1].index<rhs.m_aBB[i2].index){
