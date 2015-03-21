@@ -285,7 +285,7 @@ return true;
 inline bool BitBoardN::is_disjoint (int first_block, int last_block,const BitBoardN& rhs)	const{
 ///////////////////
 // no checking of block indexes
-	for(int i=first_block; i<last_block; ++i)
+	for(int i=first_block; i<=last_block; ++i)
 			if(m_aBB[i]& rhs.m_aBB[i]) return false;
 return true;
 }
