@@ -158,6 +158,7 @@ BitBoardS&    erase_block_pos		(int first_pos_of_block, const BitBoardS& rhs );
 inline	bool is_bit					(int nbit)				const;				//nbit is 0 based
 inline	bool is_empty				()						const;				//lax: considers empty blocks for emptyness
 		bool is_disjoint			(const BitBoardS& bb)   const;
+		bool is_disjoint			(int first_block, int last_block, const BitBoardS& bb)   const;
 /////////////////////
 // I/O 
 	void print						(ostream& = cout, bool show_pc = true) const;
@@ -239,6 +240,58 @@ bool BitBoardS::is_disjoint	(const BitBoardS& rhs) const{
 	}
 
 return true;
+}
+
+inline 
+bool BitBoardS::is_disjoint	(int first_block, int last_block, const BitBoardS& rhs)   const{
+///////////////////
+// true if there are no bits in common in the closed range [first_block, last_block]
+//
+// REMARKS: 
+// 1) no assertions on valid ranges
+
+	int i1=0, i2=0;
+
+	//updates initial element indexes it first_block is defined
+	if(first_block>0){
+
+		pair<bool, int> p1=this->find_pos(first_block);
+		pair<bool, int> p2=rhs.find_pos(first_block);
+
+		//checks whether both sparse bitstrings have at least one block greater or equal to first_block
+		if(p1.second==EMPTY_ELEM || p2.second==EMPTY_ELEM) return true;
+		i1=p1.second; i2=p2.second;
+	}
+
+	//main loop
+	int nElem=this->m_aBB.size(); int nElem_rhs=rhs.m_aBB.size();
+	//while(! ((i1>=nElem || this->m_aBB[i1].index>last_block ) || (i2>=nElem_rhs || rhs.m_aBB[i2].index>last_block )) ){
+	while( (i1<nElem && this->m_aBB[i1].index<=last_block ) || (i2<nElem && rhs.m_aBB[i2].index<=last_block ) ){
+
+		//update before either of the bitstrings has reached its end
+		if(this->m_aBB[i1].index<rhs.m_aBB[i2].index){
+			i1++;
+		}else if(rhs.m_aBB[i2].index<this->m_aBB[i1].index){
+			i2++;
+		}else{
+			if(this->m_aBB[i1].bb & rhs.m_aBB[i2].bb)
+				return false;				
+			i1++, i2++; 
+		}
+
+		/*if(lhs.m_aBB[i1].index==rhs.m_aBB[i2].index){
+		BitBoardS::elem e(lhs.m_aBB[i1].index, lhs.m_aBB[i1].bb & rhs.m_aBB[i2].bb);
+		res.m_aBB.push_back(e);
+		i1++, i2++; 
+		}else if(lhs.m_aBB[i1].index<rhs.m_aBB[i2].index){
+		i1++;
+		}else if(rhs.m_aBB[i2].index<lhs.m_aBB[i1].index){
+		i2++;
+		}*/
+	}
+	
+
+return true;		//disjoint
 }
 
 ////////////////
@@ -576,38 +629,50 @@ inline
 BitBoardS& AND (int first_block, int last_block, const BitBoardS& lhs, const BitBoardS& rhs,  BitBoardS& res){
 ///////////////////////////
 // AND between sparse sets in closed range
+// last update: 21/3/15 -BUG corrected concerning last_block and first_block value optimization  
 //
 // REMARKS: no assertions on valid ranges
 		
 	res.erase_bit();
-	pair<bool, int> p1=lhs.find_pos(first_block);
-	pair<bool, int> p2=rhs.find_pos(first_block);
-	if(p1.second!=EMPTY_ELEM && p2.second!=EMPTY_ELEM){
-		int i1=p1.second, i2=p2.second;
-		while(! (i1>last_block) || (i2>last_block) ){
-			
-			//update before either of the bitstrings has reached its end
-			if(lhs.m_aBB[i1].index<rhs.m_aBB[i2].index){
-				i1++;
-			}else if(rhs.m_aBB[i2].index<lhs.m_aBB[i1].index){
-				i2++;
-			}else{
-				BitBoardS::elem e(lhs.m_aBB[i1].index, lhs.m_aBB[i1].bb & rhs.m_aBB[i2].bb);
-				res.m_aBB.push_back(e);
-				i1++, i2++; 
-			}
+	int i1=0, i2=0;
 
-			/*if(lhs.m_aBB[i1].index==rhs.m_aBB[i2].index){
-				BitBoardS::elem e(lhs.m_aBB[i1].index, lhs.m_aBB[i1].bb & rhs.m_aBB[i2].bb);
-				res.m_aBB.push_back(e);
-				i1++, i2++; 
-			}else if(lhs.m_aBB[i1].index<rhs.m_aBB[i2].index){
-				i1++;
-			}else if(rhs.m_aBB[i2].index<lhs.m_aBB[i1].index){
-				i2++;
-			}*/
-		}
+	//updates initial element indexes it first_block is defined
+	if(first_block>0){
+
+		pair<bool, int> p1=lhs.find_pos(first_block);
+		pair<bool, int> p2=rhs.find_pos(first_block);
+
+		//checks whether both sparse bitstrings have at least one block greater or equal to first_block
+		if(p1.second==EMPTY_ELEM || p2.second==EMPTY_ELEM) return res;
+		i1=p1.second; i2=p2.second;
 	}
+
+
+	//main loop			
+	while(! ((lhs.m_aBB[i1].index>last_block) || (rhs.m_aBB[i2].index>last_block)) ){
+			
+		//update before either of the bitstrings has reached its end
+		if(lhs.m_aBB[i1].index<rhs.m_aBB[i2].index){
+			i1++;
+		}else if(rhs.m_aBB[i2].index<lhs.m_aBB[i1].index){
+			i2++;
+		}else{
+			BitBoardS::elem e(lhs.m_aBB[i1].index, lhs.m_aBB[i1].bb & rhs.m_aBB[i2].bb);
+			res.m_aBB.push_back(e);
+			i1++, i2++; 
+		}
+
+		/*if(lhs.m_aBB[i1].index==rhs.m_aBB[i2].index){
+			BitBoardS::elem e(lhs.m_aBB[i1].index, lhs.m_aBB[i1].bb & rhs.m_aBB[i2].bb);
+			res.m_aBB.push_back(e);
+			i1++, i2++; 
+		}else if(lhs.m_aBB[i1].index<rhs.m_aBB[i2].index){
+			i1++;
+		}else if(rhs.m_aBB[i2].index<lhs.m_aBB[i1].index){
+			i2++;
+		}*/
+	}
+
 return res;
 }
 
@@ -758,7 +823,7 @@ BitBoardS&  BitBoardS::erase_block (int first_block, int last_block, const BitBo
 
 		//exit condition I
 		if(p1.second==m_aBB.end() || p1.second->index>last_block || p2.second==rhs.m_aBB.end() || p2.second->index>last_block ){
-			return *this;
+			break;
 		}
 	}while(true);
 	
