@@ -23,6 +23,7 @@
 #define __BB_SENTINEL_H__
 
 #include "bbintrinsic.h"
+#include "bbalg.h"			//MIN, MAX
 
 class BBSentinel : public BBIntrin{
 public:
@@ -41,20 +42,36 @@ public:
 	int get_sentinel_L(){ return m_BBL;}
 	int get_sentinel_H(){ return m_BBH;}
 /////////////
-// basic operators
+// basic sentinel
 
 	int  update_sentinels			();
 	int  update_sentinels			(int low, int high);
 	int  update_sentinels_high		();
 	int  update_sentinels_low		();
 
-	void update_sentinels_to_v(int v);				
+	void update_sentinels_to_v(int v);	
+
+//////////////
+// basic overwritten operations (could be extended)
+
+	void  erase_bit					();
+	int  erase_bit					(int low, int high);
+	BBSentinel& erase_bit			 (const BBSentinel&);
+	
+	void set_bit					();
+	int	 set_bit					(int low, int high);
+	void set_bit					(const BBSentinel& );
+
+	bool is_empty					();
+	bool is_empty					(int nBBL, int nBBH) const;
+
 //////////////
 // I/O
 	void print(std::ostream& o);
 
 /////////////////
 // bit scanning operations 
+
 	int init_scan(scan_types sct);
 	int previous_bit_del();
 	int next_bit_del ();

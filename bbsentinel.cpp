@@ -309,3 +309,104 @@ int BBSentinel::init_scan(scan_types sct){
 	}
 return 0;
 }
+
+
+int  BBSentinel::erase_bit	(int low, int high){
+/////////////////////
+// Set all bits (0 based)  to 0 in the closed range (including both ends)
+//
+
+	int bbl= MAX(WDIV(low), m_BBL);
+	int bbh= MIN(WDIV(high), m_BBH);
+
+	if(bbl==bbh){
+		BITBOARD bb1=m_aBB[bbh] & Tables::mask_left[high-WMUL(bbh)];
+		BITBOARD bb2=m_aBB[bbl] & Tables::mask_right[low-WMUL(bbl)];
+		m_aBB[bbh]=bb1 | bb2;
+	}
+	else{
+		for(int i=bbl+1; i<=bbh-1; i++)	
+			m_aBB[i]=ZERO;
+
+		//lower
+		m_aBB[bbh] &= Tables::mask_left[high-WMUL(bbh)];		//r	
+		m_aBB[bbl] &= Tables::mask_right[low-WMUL(bbl)];
+	}
+return 0;
+}
+
+void  BBSentinel::erase_bit	(){
+///////////////
+// sets all bit blocks to ZERO
+	for(int i=m_BBL; i<=m_BBH; i++)	
+				m_aBB[i]=ZERO;
+}
+
+BBSentinel& BBSentinel::erase_bit (const BBSentinel& bbn){
+//////////////////////////////
+// deletes 1-bits in bbn from current bitstring
+	int bbl= MAX(this->m_BBL, m_BBL);
+	int bbh= MIN(this->m_BBH, m_BBH); 
+
+	for(int i=bbl; i<=bbh; i++)
+			m_aBB[i] &= ~ bbn.m_aBB[i];
+return *this;
+}
+
+int	 BBSentinel::set_bit (int low, int high){
+/////////////////////
+// Set all bits (0 based)  to 1 in the closed range (including both ends)
+// date: 22/9/14
+
+	int bbl= MAX(WDIV(low),m_BBL);
+	int bbh= MIN(WDIV(high), m_BBH); 
+	
+	if(bbl==bbh){
+		BITBOARD bb1=m_aBB[bbh]| ~Tables::mask_left[high-WMUL(bbh)];
+		BITBOARD bb2=m_aBB[bbl]| ~Tables::mask_right[low-WMUL(bbl)];
+		m_aBB[bbh]=bb1 & bb2;
+	}
+	else{
+		for(int i=bbl+1; i<=bbh-1; i++)	
+			m_aBB[i]=ONE;
+
+		//lower
+		m_aBB[bbh]|=~Tables::mask_left[high-WMUL(bbh)];			
+		m_aBB[bbl]|=~Tables::mask_right[low-WMUL(bbl)];
+	}
+return 0;
+}
+
+void BBSentinel::set_bit(){
+///////////////
+// sets all bit blocks to ONE
+	for(int i=m_BBL; i<=m_BBH; i++)	
+				m_aBB[i]=ONE;
+}
+
+void  BBSentinel::set_bit (const BBSentinel& bb_add){
+//////////////
+// copies 1-bits (equivalent to OR, set_union etc)
+	int bbl=MAX(this->m_BBL, bb_add.m_BBL);
+	int bbh=MIN(this->m_BBH, bb_add.m_BBH);
+
+	for(int i=bbl; i<=bbh; i++)	
+		m_aBB[i]|=bb_add.m_aBB[i];
+}
+
+bool BBSentinel::is_empty(){
+////////////////
+// New definition of emptyness with sentinels
+
+	return (m_BBL==EMPTY_ELEM || m_BBH==EMPTY_ELEM);
+}
+
+bool BBSentinel::is_empty (int nBBL, int nBBH) const{
+	int bbl=MAX(nBBL, m_BBL);
+	int bbh=MIN(nBBH, m_BBH);
+
+	for(int i=bbl; i<=bbh; ++i)
+			if(m_aBB[i]) return false;
+
+return true;	
+}
