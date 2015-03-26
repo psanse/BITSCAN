@@ -59,6 +59,7 @@ public:
 	int previous_bit_del();
 	int next_bit_del ();
 	int next_bit_del (BBSentinel& bbN_del);
+	int next_bit_del (int& nBB, BBSentinel& bbN_del);
 
 	int next_bit();
 	int next_bit(int& nBB);

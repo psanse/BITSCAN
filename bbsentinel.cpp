@@ -176,7 +176,7 @@ int BBSentinel::next_bit_del (){
 
 	unsigned long posInBB;
 
-	for(int i=m_BBL; i<=m_BBH; i++){
+	for(int i=m_scan.bbi; i<=m_BBH; i++){
 		if(_BitScanForward64(&posInBB,m_aBB[i]) ){
 			m_BBL=i;
 			m_aBB[i]&=~Tables::mask[posInBB];					//erase before the return
@@ -195,9 +195,9 @@ int BBSentinel::next_bit_del (BBSentinel& bbN_del){
 
 	unsigned long posInBB;
 
-	for(int i=m_BBL; i<=m_BBH; i++){
+	for(int i=m_scan.bbi; i<=m_BBH; i++){
 		if(_BitScanForward64(&posInBB, m_aBB[i]) ){
-			m_BBL=i;
+			m_scan.bbi;
 			m_aBB[i]&=~Tables::mask[posInBB];					//erase before the return
 			bbN_del.m_aBB[i]&=~Tables::mask[posInBB];
 			return (posInBB+ WMUL(i));
@@ -205,6 +205,29 @@ int BBSentinel::next_bit_del (BBSentinel& bbN_del){
 	}
 	
 return EMPTY_ELEM;  
+}
+
+int BBSentinel::next_bit_del (int& nBB, BBSentinel& bbN_del){
+//////////////
+// Bitscan distructive between sentinels
+//
+// COMMENTS
+// 1- update sentinels at the start of loop
+
+	unsigned long posInBB;
+
+	for(int i=m_scan.bbi; i<=m_BBH; i++){
+		if(_BitScanForward64(&posInBB, m_aBB[i]) ){
+			m_scan.bbi=i;
+			nBB=i;
+			m_aBB[i]&=~Tables::mask[posInBB];					//erase before the return
+			bbN_del.m_aBB[i]&=~Tables::mask[posInBB];
+			return (posInBB+ WMUL(i));
+		}
+	}
+	
+return EMPTY_ELEM; 
+
 }
 
 int BBSentinel::next_bit(){
