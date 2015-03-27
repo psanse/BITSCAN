@@ -25,10 +25,12 @@
 #include "bbintrinsic.h"
 #include "bbalg.h"			//MIN, MAX
 
+ using namespace std;
+
 class BBSentinel : public BBIntrin{
 public:
-	BBSentinel():m_BBH(EMPTY_ELEM), m_BBL(EMPTY_ELEM){init_sentinels();}
-	BBSentinel(int popsize, bool bits_to_0=true): BBIntrin(popsize, bits_to_0){ init_sentinels();}
+	BBSentinel():m_BBH(EMPTY_ELEM), m_BBL(EMPTY_ELEM){init_sentinels(false);}
+	BBSentinel(int popsize, bool bits_to_0=true): BBIntrin(popsize, bits_to_0){ init_sentinels(false);}
 	BBSentinel(const BBSentinel& bbN) : BBIntrin(bbN){ m_BBH=bbN.m_BBH; m_BBL=bbN.m_BBL;}
 	~BBSentinel(){};
 
@@ -37,8 +39,8 @@ public:
 	void set_sentinel_H(unsigned int i){ m_BBH=i;}
 	void set_sentinel_L(unsigned int i){ m_BBL=i;}
 	void set_sentinels(int low, int high);
-	void init_sentinels();							//sets sentinels to maximum scope of current bit string
-	void clear_sentinels();							//sentinels to EMPTY
+	void init_sentinels(bool update=false);								//sets sentinels to maximum scope of current bit string
+	void clear_sentinels();												//sentinels to EMPTY
 	int get_sentinel_L(){ return m_BBL;}
 	int get_sentinel_H(){ return m_BBH;}
 /////////////
@@ -55,19 +57,17 @@ public:
 // basic overwritten operations (could be extended)
 
 	void  erase_bit					();
+	//***erase_bit of a single bit is required because of the cast-to-int construction
 	int  erase_bit					(int low, int high);
 	BBSentinel& erase_bit			 (const BBSentinel&);
 	
-	void set_bit					();
-	int	 set_bit					(int low, int high);
-	void set_bit					(const BBSentinel& );
 
 	bool is_empty					();
 	bool is_empty					(int nBBL, int nBBH) const;
 
 //////////////
 // I/O
-	void print(std::ostream& o);
+	void print(ostream& o=cout);
 
 /////////////////
 // bit scanning operations 

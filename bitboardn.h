@@ -90,9 +90,9 @@ inline	int   init_bit				(int lbit, int rbit);
 		int   init_bit				(int high, const BitBoardN& bb_add);						    //copies bb_add in range [0, high] *** rename probably
 inline	void  copy_from_block		(int first_block, const BitBoardN& bb_add);						//copies from first_block (included) onwards
 inline	void  copy_up_to_block		(int last_block, const BitBoardN& bb_add);						//copies up to last_block (included)
-inline void  set_bit				(int nbit);
-inline int	 set_bit				(int low, int high);											//closed range
-inline void  set_bit				();
+		 void  set_bit				(int nbit);
+inline  int	 set_bit				(int low, int high);											//closed range
+inline  void  set_bit				();
 	   void  set_bit				(const BitBoardN& bb_add);										//OR
 
 		void set_block				(int first_block, const BitBoardN& bb_add);						//OR:closed range
