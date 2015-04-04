@@ -86,3 +86,7 @@ The file *config.h* contains customization parameters. Critical issues are:
 1. POPCOUNT_64: Disable in processor architectures which do not support intrinsic popcount64 assembly instruction. 
 2. DE\_BRUIJN: When enabled uses De Bruijn hashing for fast bit scanning.
 3. CACHED\_INDEX\_OPERATIONS: When enabled, uses additional memory to cache bitboard indexes for fast bitscanning.  The default cache size is a population size of 15001 (i.e. MAX\_CACHED\_INDEX=15001). Disable for bitarrays with population greater than 15000.
+
+Acknowledgements
+-------------------------
+This research has been partially funded by the Spanish Ministry of Economy and Competitiveness (MINECO), national grant DPI 2010-21247-C02-01.
