@@ -23,7 +23,7 @@ TEST(Sentinel, basic){
 
 	bbs.erase_bit(20);
 	bbs.erase_bit(150);
-	//bbs.print();
+	bbs.print();
 	
 	bbs.update_sentinels();
 	EXPECT_EQ(0,bbs.get_sentinel_L());
@@ -35,6 +35,13 @@ TEST(Sentinel, basic){
 	EXPECT_EQ(bbs.get_sentinel_L(),bbs1.get_sentinel_L());
 	EXPECT_EQ(bbs.get_sentinel_H(),bbs1.get_sentinel_H());
 	EXPECT_TRUE(bbs1.is_bit(10));
-	
+
+	//bit deletion
+	bbs1.erase_bit();									//in sentinel range
+	EXPECT_EQ(EMPTY_ELEM,bbs1.update_sentinels());
+	bbs1.init_sentinels(true);
+	EXPECT_EQ(EMPTY_ELEM,bbs1.get_sentinel_L());
+	EXPECT_EQ(EMPTY_ELEM,bbs1.get_sentinel_H());
+			
 	cout<<"--------------------------------------------------"<<endl;
 }

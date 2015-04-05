@@ -56,17 +56,17 @@ high:	;
 return 0;
 }
 
-int BBSentinel::update_sentinels(int low, int high){
+int BBSentinel::update_sentinels(int bbl, int bbh){
 //////////////////////
 //  last upgrade:  26/3/12 
 //  COMMENTS: Bounding condition can be improved by assuming that the bitstring have a null table at the end
 //  C-Char Style!
 
 	//empty check 
-	if(low==EMPTY_ELEM || high==EMPTY_ELEM) return EMPTY_ELEM;
+	if(bbl==EMPTY_ELEM || bbh==EMPTY_ELEM) return EMPTY_ELEM;
 
-	m_BBL=low;
-	m_BBH=high;
+	m_BBL=bbl;
+	m_BBH=bbh;
 
 	//Low
 	if(!m_aBB[m_BBL]){
@@ -289,51 +289,30 @@ return 0;
 }
 
 
-//int  BBSentinel::erase_bit (int low, int high){
-///////////////////////
-//// Set all bits (0 based) to 0 in the closed range (including both ends)
-////
-//	int bbl= MAX(WDIV(low), m_BBL);
-//	int bbh= MIN(WDIV(high), m_BBH);
-//
-//	if(bbl==bbh){
-//		BITBOARD bb1=m_aBB[bbh] & Tables::mask_left[high-WMUL(bbh)];
-//		BITBOARD bb2=m_aBB[bbl] & Tables::mask_right[low-WMUL(bbl)];
-//		m_aBB[bbh]=bb1 | bb2;
-//	}
-//	else{
-//		for(int i=bbl+1; i<=bbh-1; i++)	
-//			m_aBB[i]=ZERO;
-//
-//		//lower
-//		m_aBB[bbh] &= Tables::mask_left[high-WMUL(bbh)];		//r	
-//		m_aBB[bbl] &= Tables::mask_right[low-WMUL(bbl)];
-//	}
-//return 0;
-//}
-//
-//void  BBSentinel::erase_bit	(){
-/////////////////
-//// sets all bit blocks to ZERO
-//	for(int i=m_BBL; i<=m_BBH; i++)	
-//				m_aBB[i]=ZERO;
-//}
-//
-//void BBSentinel::erase_bit	(int nBit){
-//	BitBoardN::erase_bit(nBit);
-//}
-//
-//BBSentinel& BBSentinel::erase_bit (const BBSentinel& bbn){
-////////////////////////////////
-//// deletes 1-bits in bbn from current bitstring (experimental)
-//	
-//	int bbl= MAX(this->m_BBL, m_BBL);
-//	int bbh= MIN(this->m_BBH, m_BBH); 
-//
-//	for(int i=bbl; i<=bbh; i++)
-//			m_aBB[i] &= ~ bbn.m_aBB[i];
-//return *this;
-//}
+void  BBSentinel::erase_bit	(){
+///////////////
+// Redefinition of emptyness: in the sentinel range
+// 
+// Remarks: To ensure empty bitblocks in all the range, call init_sentinels(false) first
+	if(m_BBL==EMPTY_ELEM || m_BBH==EMPTY_ELEM) return; 
+
+	for(int i=m_BBL; i<=m_BBH; i++)	
+				m_aBB[i]=ZERO;
+}
+
+
+BBSentinel& BBSentinel::erase_bit (const BitBoardN& bbn){
+//////////////////////////////
+// deletes 1-bits in bbn in current sentinel range
+// 
+// REMARKS:
+// 1.Has to be careful with BitBoardN cast to int in constructor
+	
+	for(int i=m_BBL; i<=m_BBH; i++)
+		m_aBB[i] &= ~ bbn.get_bitboard(i);
+
+return *this;
+}
 
 
 

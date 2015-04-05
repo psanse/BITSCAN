@@ -47,7 +47,7 @@ public:
 // basic sentinel
 
 	int  update_sentinels			();
-	int  update_sentinels			(int low, int high);
+	int  update_sentinels			(int bbl, int bbh);
 	int  update_sentinels_high		();
 	int  update_sentinels_low		();
 
@@ -55,14 +55,14 @@ public:
 
 //////////////
 // basic overwritten operations (could be extended)
-
-	//void  erase_bit				();
-	//void  erase_bit				(int nBit);							//required because of the cast-to-int construction of sentinels (1)
-	//int   erase_bit				(int low, int high);
-	//BBSentinel& erase_bit			(const BBSentinel&);				//(1): required for SEQ
+	
+	//erase: will not update sentinels	
+	void  erase_bit					();											//in sentinel range
+	void  erase_bit					(int nBit) {BitBoardN::erase_bit(nBit);}	//required because of the cast-to-int construction of sentinels (1)
+	BBSentinel& erase_bit			(const BitBoardN&);							//(1): required for SEQ coloring
 	
 	bool is_empty					()const;
-	bool is_empty					(int nBBL, int nBBH) const;			//is empty in range
+	bool is_empty					(int nBBL, int nBBH) const;					//is empty in range
 
 ////////////////
 // operators
