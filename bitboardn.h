@@ -138,7 +138,7 @@ inline void  erase_bit				();
 //Member data
 protected:
 	BITBOARD* m_aBB;
-	int m_nBB;					//Number of BITBOARDS (1 based)
+	int m_nBB;				//number of BITBOARDS (1 based)
 };
 
 inline int BitBoardN::msbn64() const{
@@ -470,7 +470,7 @@ inline int  BitBoardN::erase_bit (int low, int high){
 			m_aBB[i]=ZERO;
 
 		//lower
-		m_aBB[bbh] &= Tables::mask_left[high-WMUL(bbh)];		//r	
+		m_aBB[bbh] &= Tables::mask_left[high-WMUL(bbh)];			
 		m_aBB[bbl] &= Tables::mask_right[low-WMUL(bbl)];
 	}
 return 0;

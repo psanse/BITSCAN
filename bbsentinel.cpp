@@ -177,7 +177,7 @@ int BBSentinel::next_bit_del (){
 
 	unsigned long posInBB;
 
-	for(int i=m_scan.bbi; i<=m_BBH; i++){
+	for(int i=m_BBL; i<=m_BBH; i++){
 		if(_BitScanForward64(&posInBB,m_aBB[i]) ){
 			m_BBL=i;
 			m_aBB[i]&=~Tables::mask[posInBB];					//erase before the return
@@ -192,13 +192,13 @@ int BBSentinel::next_bit_del (BBSentinel& bbN_del){
 // Bitscan distructive between sentinels
 //
 // COMMENTS
-// 1- update sentinels at the start of loop
+// 1- update sentinels at the start of loop (experimental, does not use sentinesl of bbN_del)
 
 	unsigned long posInBB;
 
-	for(int i=m_scan.bbi; i<=m_BBH; i++){
+	for(int i=m_BBL; i<=m_BBH; i++){
 		if(_BitScanForward64(&posInBB, m_aBB[i]) ){
-			m_scan.bbi;
+			m_BBL=i;
 			m_aBB[i]&=~Tables::mask[posInBB];					//erase before the return
 			bbN_del.m_aBB[i]&=~Tables::mask[posInBB];
 			return (posInBB+ WMUL(i));
@@ -208,28 +208,7 @@ int BBSentinel::next_bit_del (BBSentinel& bbN_del){
 return EMPTY_ELEM;  
 }
 
-int BBSentinel::next_bit_del (int& nBB, BBSentinel& bbN_del){
-//////////////
-// Bitscan distructive between sentinels
-//
-// COMMENTS
-// 1- update sentinels at the start of loop
 
-	unsigned long posInBB;
-
-	for(int i=m_scan.bbi; i<=m_BBH; i++){
-		if(_BitScanForward64(&posInBB, m_aBB[i]) ){
-			m_scan.bbi=i;
-			nBB=i;
-			m_aBB[i]&=~Tables::mask[posInBB];					//erase before the return
-			bbN_del.m_aBB[i]&=~Tables::mask[posInBB];
-			return (posInBB+ WMUL(i));
-		}
-	}
-	
-return EMPTY_ELEM; 
-
-}
 
 int BBSentinel::next_bit(){
 ////////////////////////////
@@ -296,13 +275,11 @@ int BBSentinel::init_scan(scan_types sct){
 		m_scan.bbi=m_BBH;
 		m_scan.pos=WORD_SIZE;		//mask_right[WORD_SIZE]=ONE
 		break;
-	case DESTRUCTIVE:
+	case DESTRUCTIVE:				//uses sentinels to iterate and updates them on the fly
 		update_sentinels();
-		m_scan.bbi=m_BBL;
 		break;
-	case DESTRUCTIVE_REVERSE:
+	case DESTRUCTIVE_REVERSE:		//uses sentinels to iterate and updates them on the fly
 		update_sentinels();
-		m_scan.bbi=m_BBH;
 		break;
 	default:
 		cerr<<"bad scan type"<<endl;
@@ -312,50 +289,55 @@ return 0;
 }
 
 
-int  BBSentinel::erase_bit (int low, int high){
-/////////////////////
-// Set all bits (0 based) to 0 in the closed range (including both ends)
+//int  BBSentinel::erase_bit (int low, int high){
+///////////////////////
+//// Set all bits (0 based) to 0 in the closed range (including both ends)
+////
+//	int bbl= MAX(WDIV(low), m_BBL);
+//	int bbh= MIN(WDIV(high), m_BBH);
 //
-	int bbl= MAX(WDIV(low), m_BBL);
-	int bbh= MIN(WDIV(high), m_BBH);
+//	if(bbl==bbh){
+//		BITBOARD bb1=m_aBB[bbh] & Tables::mask_left[high-WMUL(bbh)];
+//		BITBOARD bb2=m_aBB[bbl] & Tables::mask_right[low-WMUL(bbl)];
+//		m_aBB[bbh]=bb1 | bb2;
+//	}
+//	else{
+//		for(int i=bbl+1; i<=bbh-1; i++)	
+//			m_aBB[i]=ZERO;
+//
+//		//lower
+//		m_aBB[bbh] &= Tables::mask_left[high-WMUL(bbh)];		//r	
+//		m_aBB[bbl] &= Tables::mask_right[low-WMUL(bbl)];
+//	}
+//return 0;
+//}
+//
+//void  BBSentinel::erase_bit	(){
+/////////////////
+//// sets all bit blocks to ZERO
+//	for(int i=m_BBL; i<=m_BBH; i++)	
+//				m_aBB[i]=ZERO;
+//}
+//
+//void BBSentinel::erase_bit	(int nBit){
+//	BitBoardN::erase_bit(nBit);
+//}
+//
+//BBSentinel& BBSentinel::erase_bit (const BBSentinel& bbn){
+////////////////////////////////
+//// deletes 1-bits in bbn from current bitstring (experimental)
+//	
+//	int bbl= MAX(this->m_BBL, m_BBL);
+//	int bbh= MIN(this->m_BBH, m_BBH); 
+//
+//	for(int i=bbl; i<=bbh; i++)
+//			m_aBB[i] &= ~ bbn.m_aBB[i];
+//return *this;
+//}
 
-	if(bbl==bbh){
-		BITBOARD bb1=m_aBB[bbh] & Tables::mask_left[high-WMUL(bbh)];
-		BITBOARD bb2=m_aBB[bbl] & Tables::mask_right[low-WMUL(bbl)];
-		m_aBB[bbh]=bb1 | bb2;
-	}
-	else{
-		for(int i=bbl+1; i<=bbh-1; i++)	
-			m_aBB[i]=ZERO;
-
-		//lower
-		m_aBB[bbh] &= Tables::mask_left[high-WMUL(bbh)];		//r	
-		m_aBB[bbl] &= Tables::mask_right[low-WMUL(bbl)];
-	}
-return 0;
-}
-
-void  BBSentinel::erase_bit	(){
-///////////////
-// sets all bit blocks to ZERO
-	for(int i=m_BBL; i<=m_BBH; i++)	
-				m_aBB[i]=ZERO;
-}
-
-BBSentinel& BBSentinel::erase_bit (const BBSentinel& bbn){
-//////////////////////////////
-// deletes 1-bits in bbn from current bitstring
-	int bbl= MAX(this->m_BBL, m_BBL);
-	int bbh= MIN(this->m_BBH, m_BBH); 
-
-	for(int i=bbl; i<=bbh; i++)
-			m_aBB[i] &= ~ bbn.m_aBB[i];
-return *this;
-}
 
 
-
-bool BBSentinel::is_empty(){
+bool BBSentinel::is_empty() const{
 ////////////////
 // New definition of emptyness with sentinels
 
@@ -370,4 +352,26 @@ bool BBSentinel::is_empty (int nBBL, int nBBH) const{
 			if(m_aBB[i]) return false;
 
 return true;	
+}
+
+void BBSentinel::operator= (const  BBSentinel& bbs){
+///////////////
+// redefinition of equality: same sentinels of the copied bbs, same bitblocks in sentinel range
+
+	m_BBL=bbs.m_BBL;
+	m_BBH=bbs.m_BBH;
+
+	for(int i=m_BBL; i<=m_BBH; i++){
+		this->m_aBB[i]=bbs.m_aBB[i];
+	}
+
+}
+
+void BBSentinel::operator&=	(const BitBoardN& bbn){
+//////////////////
+// AND operation in the range of the sentinels
+
+	for(int i=m_BBL; i<=m_BBH; i++){
+		this->m_aBB[i]=bbn.get_bitboard(i);
+	}
 }

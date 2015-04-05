@@ -9,7 +9,6 @@
 
 using namespace std;
 
-
 TEST(Sentinel, basic){
 	cout<<"Sentinel:basic-------------------------------------"<<endl;
 	BBSentinel bbs(200);
@@ -24,16 +23,18 @@ TEST(Sentinel, basic){
 
 	bbs.erase_bit(20);
 	bbs.erase_bit(150);
-	bbs.print();
-	//bbs.update_sentinels();
-	//EXPECT_EQ(0,bbs.get_sentinel_L());
-	//EXPECT_EQ(0,bbs.get_sentinel_H());
+	//bbs.print();
+	
+	bbs.update_sentinels();
+	EXPECT_EQ(0,bbs.get_sentinel_L());
+	EXPECT_EQ(0,bbs.get_sentinel_H());
 
-	////equality
-	//BBSentinel bbs1(200);
-	//bbs1=bbs;
-	//EXPECT_EQ(bbs.get_sentinel_L(),bbs1.get_sentinel_L());
-	//EXPECT_EQ(bbs.get_sentinel_H(),bbs1.get_sentinel_H());
+	//redefiniton of equality (same sentinels and bitblocks in sentinel range)
+	BBSentinel bbs1(200);
+	bbs1=bbs;
+	EXPECT_EQ(bbs.get_sentinel_L(),bbs1.get_sentinel_L());
+	EXPECT_EQ(bbs.get_sentinel_H(),bbs1.get_sentinel_H());
+	EXPECT_TRUE(bbs1.is_bit(10));
 	
 	cout<<"--------------------------------------------------"<<endl;
 }

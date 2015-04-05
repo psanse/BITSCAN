@@ -51,19 +51,23 @@ public:
 	int  update_sentinels_high		();
 	int  update_sentinels_low		();
 
-	void update_sentinels_to_v(int v);	
+	void update_sentinels_to_v		(int v);	
 
 //////////////
 // basic overwritten operations (could be extended)
 
-	void  erase_bit					();
-	//***erase_bit of a single bit is required because of the cast-to-int construction
-	int  erase_bit					(int low, int high);
-	BBSentinel& erase_bit			 (const BBSentinel&);
+	//void  erase_bit				();
+	//void  erase_bit				(int nBit);							//required because of the cast-to-int construction of sentinels (1)
+	//int   erase_bit				(int low, int high);
+	//BBSentinel& erase_bit			(const BBSentinel&);				//(1): required for SEQ
 	
+	bool is_empty					()const;
+	bool is_empty					(int nBBL, int nBBH) const;			//is empty in range
 
-	bool is_empty					();
-	bool is_empty					(int nBBL, int nBBH) const;
+////////////////
+// operators
+	void operator=					(const BBSentinel&);
+	void operator&=					(const BitBoardN&);
 
 //////////////
 // I/O
@@ -76,8 +80,7 @@ public:
 	int previous_bit_del();
 	int next_bit_del ();
 	int next_bit_del (BBSentinel& bbN_del);
-	int next_bit_del (int& nBB, BBSentinel& bbN_del);
-
+	
 	int next_bit();
 	int next_bit(int& nBB);
 
