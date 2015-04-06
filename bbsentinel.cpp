@@ -4,6 +4,13 @@
 
 using namespace std;
 
+BBSentinel&  AND (const BitBoardN& lhs, const BBSentinel& rhs,  BBSentinel& res){
+	for(int i=rhs.m_BBL; i<=rhs.m_BBH; i++){
+		res.m_aBB[i]=lhs.get_bitboard(i)&rhs.m_aBB[i];
+	}
+return res;
+}
+
 void BBSentinel::init_sentinels(bool update){
 ////////////////
 //sets sentinels to maximum scope of current bit string
@@ -358,3 +365,4 @@ BBSentinel& BBSentinel::operator&=	(const BitBoardN& bbn){
 
 	return  *this;
 }
+

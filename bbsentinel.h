@@ -28,6 +28,7 @@
  using namespace std;
 
 class BBSentinel : public BBIntrin{
+	friend BBSentinel&  AND	(const BitBoardN& lhs, const BBSentinel& rhs,  BBSentinel& res);
 public:
 	BBSentinel():m_BBH(EMPTY_ELEM), m_BBL(EMPTY_ELEM){init_sentinels(false);}
 	BBSentinel(int popsize, bool bits_to_0=true): BBIntrin(popsize, bits_to_0){ init_sentinels(false);}
@@ -64,6 +65,10 @@ public:
 	bool is_empty					()const;
 	bool is_empty					(int nBBL, int nBBH) const;					//is empty in range
 
+#ifdef POPCOUNT_64
+	int popcn64					() const;
+#endif
+
 ////////////////
 // operators
 	BBSentinel& operator=					(const BBSentinel&);
@@ -92,5 +97,14 @@ protected:
 #endif
 
 
+#ifdef POPCOUNT_64
+inline int BBSentinel::popcn64() const{
+	BITBOARD pc=0;
+	for(int i=m_BBL; i<=m_BBH; i++){
+		pc+=__popcnt64(m_aBB[i]);
+	}
+return pc;
+}
+#endif
 
 
