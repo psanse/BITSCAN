@@ -66,8 +66,8 @@ public:
 
 ////////////////
 // operators
-	void operator=					(const BBSentinel&);
-	void operator&=					(const BitBoardN&);
+	BBSentinel& operator=					(const BBSentinel&);
+	BBSentinel& operator&=					(const BitBoardN&);
 
 //////////////
 // I/O

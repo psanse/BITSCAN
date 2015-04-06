@@ -333,7 +333,7 @@ bool BBSentinel::is_empty (int nBBL, int nBBH) const{
 return true;	
 }
 
-void BBSentinel::operator= (const  BBSentinel& bbs){
+BBSentinel& BBSentinel::operator= (const  BBSentinel& bbs){
 ///////////////
 // redefinition of equality: same sentinels of the copied bbs, same bitblocks in sentinel range
 
@@ -344,13 +344,17 @@ void BBSentinel::operator= (const  BBSentinel& bbs){
 		this->m_aBB[i]=bbs.m_aBB[i];
 	}
 
+	return *this;
+
 }
 
-void BBSentinel::operator&=	(const BitBoardN& bbn){
+BBSentinel& BBSentinel::operator&=	(const BitBoardN& bbn){
 //////////////////
 // AND operation in the range of the sentinels
 
 	for(int i=m_BBL; i<=m_BBH; i++){
 		this->m_aBB[i]=bbn.get_bitboard(i);
 	}
+
+	return  *this;
 }
