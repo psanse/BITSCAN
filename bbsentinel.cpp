@@ -316,7 +316,7 @@ BBSentinel& BBSentinel::erase_bit (const BitBoardN& bbn){
 // 1.Has to be careful with BitBoardN cast to int in constructor
 	
 	for(int i=m_BBL; i<=m_BBH; i++)
-		m_aBB[i] &= ~ bbn.get_bitboard(i);
+		m_aBB[i] &= ~ bbn.get_bitboard(i);		//**access
 
 return *this;
 }
@@ -360,7 +360,7 @@ BBSentinel& BBSentinel::operator&=	(const BitBoardN& bbn){
 // AND operation in the range of the sentinels
 
 	for(int i=m_BBL; i<=m_BBH; i++){
-		this->m_aBB[i]=bbn.get_bitboard(i);
+		this->m_aBB[i]&=bbn.get_bitboard(i);
 	}
 
 	return  *this;
