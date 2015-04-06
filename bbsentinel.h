@@ -83,7 +83,7 @@ public:
 // bit scanning operations 
 
 	int init_scan(scan_types sct);
-	int previous_bit_del();
+	int previous_bit_del();							//**TODO- empty bitstring
 	int next_bit_del ();
 	int next_bit_del (BBSentinel& bbN_del);
 	
