@@ -28,7 +28,7 @@
  using namespace std;
 
 class BBSentinel : public BBIntrin{
-	friend BBSentinel&  AND	(const BitBoardN& lhs, const BBSentinel& rhs,  BBSentinel& res);
+	friend BBSentinel&  AND	(const BitBoardN& lhs, const BBSentinel& rhs,  BBSentinel& res);		//updates sentinels
 public:
 	BBSentinel():m_BBH(EMPTY_ELEM), m_BBL(EMPTY_ELEM){init_sentinels(false);}
 	BBSentinel(int popsize, bool bits_to_0=true): BBIntrin(popsize, bits_to_0){ init_sentinels(false);}
@@ -60,6 +60,7 @@ public:
 	//erase: will not update sentinels	
 	void  erase_bit					();											//in sentinel range
 	void  erase_bit					(int nBit) {BitBoardN::erase_bit(nBit);}	//required because of the cast-to-int construction of sentinels (1)
+	void  erase_bit_and_update		(int nBit);									//erases and updates sentinels			
 	BBSentinel& erase_bit			(const BitBoardN&);							//(1): required for SEQ coloring
 	
 	bool is_empty					()const;

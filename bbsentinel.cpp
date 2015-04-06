@@ -5,6 +5,8 @@
 using namespace std;
 
 BBSentinel&  AND (const BitBoardN& lhs, const BBSentinel& rhs,  BBSentinel& res){
+	res.m_BBL=rhs.m_BBL;
+	res.m_BBH=rhs.m_BBH;
 	for(int i=rhs.m_BBL; i<=rhs.m_BBH; i++){
 		res.m_aBB[i]=lhs.get_bitboard(i)&rhs.m_aBB[i];
 	}
@@ -320,6 +322,37 @@ BBSentinel& BBSentinel::erase_bit (const BitBoardN& bbn){
 
 return *this;
 }
+
+void  BBSentinel::erase_bit_and_update(int nBit) {
+	if(m_BBL==EMPTY_ELEM || m_BBH==EMPTY_ELEM ) return;		//empty bitsring
+	
+	int bb=WDIV(nBit);
+	m_aBB[bb] &= ~Tables::mask[WMOD(nBit)];
+
+	//update watched literals if necessary
+	if(!m_aBB[bb]){
+		if(m_BBL==bb){
+			for(m_BBL=m_BBL+1; m_BBL<=m_BBH; m_BBL++){
+				if(m_aBB[m_BBL])
+						return;
+			}
+			m_BBL=EMPTY_ELEM;
+			m_BBH=EMPTY_ELEM;
+			return;
+		}
+		
+		if(m_BBH==bb){
+			for(m_BBH=m_BBH-1; m_BBH>=m_BBL; m_BBH--){
+				if(m_aBB[m_BBH])
+						return;
+			}
+			m_BBL=EMPTY_ELEM;
+			m_BBH=EMPTY_ELEM;
+			return;
+
+		}
+	}
+}	
 
 
 

@@ -52,6 +52,18 @@ TEST(Sentinel, basic){
 	EXPECT_TRUE(bbs2.is_bit(10));
 	bbs2.update_sentinels();
 	EXPECT_EQ(1, bbs2.popcn64());
+
+	//erase_bit and update
+	bbs.init_sentinels();
+	bbs.erase_bit();
+	bbs.set_bit(10);
+	bbs.set_bit(20);
+	bbs.set_bit(150);
+	bbs.update_sentinels();
+	bbs.erase_bit_and_update(150);						//erases and updates sentinels		
+	EXPECT_EQ(0,bbs.get_sentinel_L());
+	EXPECT_EQ(0,bbs.get_sentinel_H());
+
 				
 	cout<<"--------------------------------------------------"<<endl;
 }
