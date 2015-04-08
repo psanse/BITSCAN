@@ -80,7 +80,8 @@ public:
 	BitBoardS						():m_MAXBB(EMPTY_ELEM){}												//is this necessary?											
 	BitBoardS						(int size, bool is_popsize=true );										//popsize is 1-based
 	BitBoardS						(const BitBoardS& );	
-	
+virtual ~BitBoardS					(){clear();}	
+
 	int init						(int size, bool is_popsize=true);					
 	void clear						();
 	void sort						();

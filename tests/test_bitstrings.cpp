@@ -510,6 +510,7 @@ protected:
 
 TEST_F(BasicFunctionsTest, miscellanous){
 	EXPECT_EQ(bbn.popcn64(),bbi.popcn64());
+	bbs.init_sentinels(true);
 	EXPECT_EQ(bbn.popcn64(),bbs.popcn64());
 	EXPECT_EQ(to_vector(bbn), to_vector(bbi));
 	EXPECT_EQ(to_vector(bbn), to_vector(bbs));
