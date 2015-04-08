@@ -364,8 +364,8 @@ bool BBSentinel::is_empty() const{
 }
 
 bool BBSentinel::is_empty (int nBBL, int nBBH) const{
-	int bbl=MAX(nBBL, m_BBL);
-	int bbh=MIN(nBBH, m_BBH);
+	int bbl=max(nBBL, m_BBL);
+	int bbh=min(nBBH, m_BBH);
 
 	for(int i=bbl; i<=bbh; ++i)
 			if(m_aBB[i]) return false;
