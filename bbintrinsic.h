@@ -44,7 +44,7 @@ public:
 	};
 		
 	 BBIntrin						(){};										
-	 BBIntrin						(int popsize /*1 based*/, bool reset=true):BitBoardN(popsize,reset){}	
+explicit  BBIntrin				(int popsize /*1 based*/, bool reset=true):BitBoardN(popsize,reset){}	
 	 BBIntrin						(const BBIntrin& bbN):BitBoardN(bbN){}
 	 BBIntrin						(const std::vector<int>& v): BitBoardN(v){}
 virtual ~BBIntrin					(){}

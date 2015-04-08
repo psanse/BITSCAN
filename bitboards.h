@@ -78,7 +78,7 @@ public:
 	friend BitBoardS&  OR			(const BitBoardS& lhs, const BitBoardS& rhs,  BitBoardS& res);
 				
 	BitBoardS						():m_MAXBB(EMPTY_ELEM){}												//is this necessary?											
-	BitBoardS						(int size, bool is_popsize=true );										//popsize is 1-based
+explicit BitBoardS					(int size, bool is_popsize=true );										//popsize is 1-based
 	BitBoardS						(const BitBoardS& );	
 virtual ~BitBoardS					(){clear();}	
 

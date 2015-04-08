@@ -50,7 +50,7 @@ public:
 	friend BitBoardN&  OR			(const BitBoardN& lhs, const BitBoardN& rhs,  BitBoardN& res);
 
 	 BitBoardN						(): m_nBB(EMPTY_ELEM),m_aBB(NULL){};										
-	 BitBoardN						(int popsize /*1 based*/, bool reset=true);	
+explicit  BitBoardN					(int popsize /*1 based*/, bool reset=true);	
 	 BitBoardN						(const BitBoardN& bbN);
 	 BitBoardN						(const std::vector<int>& v);
 virtual	~BitBoardN					();

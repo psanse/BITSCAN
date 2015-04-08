@@ -35,7 +35,7 @@ class BBIntrinS: public BitBoardS{
 public:	
 				
 	 BBIntrinS						(){};										
-	 BBIntrinS						(int popsize /*1 based*/, bool reset=true):BitBoardS(popsize,reset){}	
+explicit BBIntrinS					(int popsize /*1 based*/, bool reset=true):BitBoardS(popsize,reset){}	
 	 BBIntrinS						(const BBIntrinS& bbN):BitBoardS(bbN){}
 
 	 void set_bbindex				(int bbindex){m_scan.bbi=bbindex;}			//refers to the position in the collection (not in the bitstring)

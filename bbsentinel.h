@@ -31,7 +31,7 @@ class BBSentinel : public BBIntrin{
 	friend BBSentinel&  AND	(const BitBoardN& lhs, const BBSentinel& rhs,  BBSentinel& res);		//updates sentinels
 public:
 	BBSentinel():m_BBH(EMPTY_ELEM), m_BBL(EMPTY_ELEM){init_sentinels(false);}
-	BBSentinel(int popsize, bool bits_to_0=true): BBIntrin(popsize, bits_to_0){ init_sentinels(false);}
+explicit BBSentinel(int popsize, bool bits_to_0=true): BBIntrin(popsize, bits_to_0){ init_sentinels(false);}
 	BBSentinel(const BBSentinel& bbN) : BBIntrin(bbN){ m_BBH=bbN.m_BBH; m_BBL=bbN.m_BBL;}
 	~BBSentinel(){};
 
