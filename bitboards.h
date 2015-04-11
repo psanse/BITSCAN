@@ -103,15 +103,15 @@ virtual ~BitBoardS					(){clear();}
 // Bitscanning
 
 	//find least/most signinficant bit
-inline	int msbn64					(int& nElem)			const;				
-inline	int lsbn64					(int& nElem)			const; 	
-	int msbn64						()						const;			//lookup
-	int lsbn64						()						const; 			//de Bruijn	/ lookup
+virtual inline	int msbn64				(int& nElem)			const;				
+virtual inline	int lsbn64				(int& nElem)			const; 	
+virtual	int msbn64						()						const;		//lookup
+virtual	int lsbn64						()						const; 		//de Bruijn	/ lookup
 
 	//for scanning all bits
 	
-inline	int next_bit				(int nBit)				;				//uses cached elem position for fast bitscanning
-inline	int previous_bit			(int nBit)				;				//uses cached elem position for fast bitscanning
+virtual inline	int next_bit			(int nBit)				;				//uses cached elem position for fast bitscanning
+virtual inline	int previous_bit		(int nBit)				;				//uses cached elem position for fast bitscanning
 
 private:
 	int next_bit					(int nBit)				const;			//de Bruijn 
@@ -120,8 +120,8 @@ private:
 public:	
 /////////////////
 // Popcount
-inline	 int popcn64				()						const;			//lookup 
-inline	 int popcn64				(int nBit)				const;			
+virtual inline	 int popcn64		()						const;			//lookup 
+virtual inline	 int popcn64		(int nBit)				const;			
 
 /////////////////////
 //Set/Delete Bits (nbit is always 0 based)
@@ -162,10 +162,10 @@ inline	bool is_empty				()						const;				//lax: considers empty blocks for empt
 		bool is_disjoint			(int first_block, int last_block, const BitBoardS& bb)   const;
 /////////////////////
 // I/O 
-	void print						(ostream& = cout, bool show_pc = true) const;
+virtual	void print					(ostream& = cout, bool show_pc = true) const;
 	string to_string				();
 	
-	void to_vector					(std::vector<int>& )				const;
+	void to_vector					(std::vector<int>& )	const;
 ////////////////////////
 //Member data
 protected:

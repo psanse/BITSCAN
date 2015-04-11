@@ -55,34 +55,34 @@ virtual ~BBIntrin					(){}
 	
 //////////////////////////////
 // bitscanning
-inline int lsbn64					() const;
-inline int msbn64					() const; 
+inline virtual int lsbn64			() const;
+inline virtual int msbn64			() const; 
 
 	//bit scan forward (destructive)
-	int init_scan					(scan_types);	
+virtual	int init_scan					(scan_types);	
 virtual	int init_scan_from			(int from, scan_types);
 virtual inline int next_bit_del		(); 												
-inline int next_bit_del				(int& nBB /* table index*/); 
-inline int next_bit_del				(int& nBB,  BBIntrin& bbN_del); 	 
+virtual inline int next_bit_del		(int& nBB /* table index*/); 
+virtual inline int next_bit_del		(int& nBB,  BBIntrin& bbN_del); 	 
 
 	//bit scan forward (non destructive)
 virtual inline int next_bit			();
 virtual inline int next_bit			(int &); 
-		inline int next_bit			(int &,  BBIntrin& ); 
+virtual	inline int next_bit			(int &,  BBIntrin& ); 
 
 	//bit scan backwards (non destructive)
-inline int previous_bit					(); 
+virtual inline int previous_bit		(); 
 
 	//bit scan backwards (destructive)
-virtual inline int previous_bit_del		(); 
+ virtual inline int previous_bit_del		(); 
 inline int previous_bit_del				(int& nBB);
 inline int previous_bit_del				(int& nBB,  BBIntrin& del ); 
 
 /////////////////
 // Popcount
 #ifdef POPCOUNT_64
-	 inline int popcn64				()						const;
-	 inline int popcn64				(int nBit/*0 based*/)	const;
+virtual	 inline int popcn64				()						const;
+virtual	 inline int popcn64				(int nBit/*0 based*/)	const;
 #endif
 
 //////////////////

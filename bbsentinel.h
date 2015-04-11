@@ -58,13 +58,13 @@ explicit BBSentinel(int popsize, bool bits_to_0=true): BBIntrin(popsize, bits_to
 // basic overwritten operations (could be extended)
 	
 	//erase: will not update sentinels	
-	void  erase_bit					();											//in sentinel range
-	void  erase_bit					(int nBit) {BitBoardN::erase_bit(nBit);}	//required because of the cast-to-int construction of sentinels (1)
+virtual	void  erase_bit				();											//in sentinel range
+virtual	void  erase_bit				(int nBit) {BitBoardN::erase_bit(nBit);}	//required because of the cast-to-int construction of sentinels (1)
 	void  erase_bit_and_update		(int nBit);									//erases and updates sentinels			
 	BBSentinel& erase_bit			(const BitBoardN&);							//(1): required for SEQ coloring
 	
-	bool is_empty					()const;
-	bool is_empty					(int nBBL, int nBBH) const;					//is empty in range
+virtual	bool is_empty				()const;
+virtual	bool is_empty				(int nBBL, int nBBH) const;					//is empty in range
 
 #ifdef POPCOUNT_64
 	int popcn64					() const;
@@ -72,8 +72,8 @@ explicit BBSentinel(int popsize, bool bits_to_0=true): BBIntrin(popsize, bits_to
 
 ////////////////
 // operators
-	BBSentinel& operator=					(const BBSentinel&);
-	BBSentinel& operator&=					(const BitBoardN&);
+	BBSentinel& operator=		(const BBSentinel&);
+	BBSentinel& operator&=		(const BitBoardN&);
 
 //////////////
 // I/O
@@ -82,13 +82,13 @@ explicit BBSentinel(int popsize, bool bits_to_0=true): BBIntrin(popsize, bits_to
 /////////////////
 // bit scanning operations 
 
-	int init_scan(scan_types sct);
-	int previous_bit_del();							//**TODO- empty bitstring
-	int next_bit_del ();
-	int next_bit_del (BBSentinel& bbN_del);
+virtual	int init_scan(scan_types sct);
+virtual inline int previous_bit_del();							//**TODO- empty bitstring
+virtual inline	int next_bit_del ();
+virtual inline	int next_bit_del (BBSentinel& bbN_del);
 	
-	int next_bit();
-	int next_bit(int& nBB);
+virtual inline	int next_bit();
+virtual inline	int next_bit(int& nBB);
 
 protected:	
 	 int m_BBH;										//explicit storage for sentinel high index
@@ -106,6 +106,141 @@ inline int BBSentinel::popcn64() const{
 	}
 return pc;
 }
+
+
+
+
+
+
+
+//specializes the only bitscan function used
+inline
+int BBSentinel::previous_bit_del(){
+//////////////
+// BitScan reverse order and distructive
+//
+// COMMENTS
+// 1- update sentinels at the start of loop
+
+	unsigned long posInBB;
+
+	for(int i=m_BBH; i>=m_BBL; i--){
+		if(_BitScanReverse64(&posInBB,m_aBB[i])){
+			m_BBH=i;
+			m_aBB[i]&=~Tables::mask[posInBB];			//erase before the return
+			return (posInBB+WMUL(i));
+		}
+	}
+return EMPTY_ELEM;  
+}
+
+inline
+int BBSentinel::next_bit_del (){
+//////////////
+// Bitscan distructive between sentinels
+//
+// COMMENTS
+// 1- update sentinels at the start of loop
+
+	unsigned long posInBB;
+
+	for(int i=m_BBL; i<=m_BBH; i++){
+		if(_BitScanForward64(&posInBB,m_aBB[i]) ){
+			m_BBL=i;
+			m_aBB[i]&=~Tables::mask[posInBB];					//erase before the return
+			return (posInBB+ WMUL(i));
+		}
+	}
+return EMPTY_ELEM;  
+}
+
+inline
+int BBSentinel::next_bit_del (BBSentinel& bbN_del){
+//////////////
+// Bitscan distructive between sentinels
+//
+// COMMENTS
+// 1- update sentinels at the start of loop (experimental, does not use sentinesl of bbN_del)
+
+	unsigned long posInBB;
+
+	for(int i=m_BBL; i<=m_BBH; i++){
+		if(_BitScanForward64(&posInBB, m_aBB[i]) ){
+			m_BBL=i;
+			m_aBB[i]&=~Tables::mask[posInBB];					//erase before the return
+			bbN_del.m_aBB[i]&=~Tables::mask[posInBB];
+			return (posInBB+ WMUL(i));
+		}
+	}
+	
+return EMPTY_ELEM;  
+}
+
+
+inline
+int BBSentinel::next_bit(){
+////////////////////////////
+// last update:31/12/2013
+// BitScan non destructive
+//
+// COMMENTS
+// 1- update sentinels, set m_scan.bbi to m_BBL and set m_scan.pos to MASK_LIM at the start of loop
+
+	unsigned long posInBB;
+				
+	if(_BitScanForward64(&posInBB, m_aBB[m_scan.bbi] & Tables::mask_left[m_scan.pos])){
+		m_scan.pos =posInBB;
+		return (posInBB + WMUL(m_scan.bbi));
+	}else{													
+		for(int i=m_scan.bbi+1; i<=m_BBH; i++){
+			if(_BitScanForward64(&posInBB,m_aBB[i])){
+				m_scan.bbi=i;
+				m_scan.pos=posInBB;
+				return (posInBB+ WMUL(i));
+			}
+		}
+	}
+return EMPTY_ELEM;
+}
+
+inline
+int BBSentinel::next_bit(int& nBB){
+////////////////////////////
+// last update:31/12/2013
+// BitScan non destructive
+//
+// COMMENTS
+// 1- update sentinels, set m_scan.bbi to m_BBL and set m_scan.pos to MASK_LIM at the start of loop
+
+	unsigned long posInBB;
+			
+	//look uo in the last table
+	if(_BitScanForward64(&posInBB, m_aBB[m_scan.bbi] & Tables::mask_left[m_scan.pos])){
+		m_scan.pos =posInBB;
+		nBB=m_scan.bbi;
+		return (posInBB + WMUL(m_scan.bbi));
+	}else{											//not found in the last table. look up in the rest
+		for(int i=(m_scan.bbi+1); i<=m_BBH; i++){
+			if(_BitScanForward64(&posInBB,m_aBB[i])){
+				m_scan.bbi=i;
+				m_scan.pos=posInBB;
+				nBB=i;
+				return (posInBB+ WMUL(i));
+			}
+		}
+	}
+return EMPTY_ELEM;
+}
+
+
+
+
+
+
+
+
 #endif
+
+
 
 

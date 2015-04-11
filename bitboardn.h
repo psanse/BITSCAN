@@ -57,7 +57,7 @@ virtual	~BitBoardN					();
 		 
 	void init						(int popsize, bool reset=true);										
 	void init						(int popsize, const vector<int> & );								
-	BitBoardN& operator =			(const BitBoardN& );		
+virtual	BitBoardN& operator =		(const BitBoardN& );		
 /////////////////////
 //setters and getters (will not allocate memory)
 	
@@ -71,8 +71,8 @@ const BITBOARD get_bitboard			(int block) const {return m_aBB[block];}
 // Bitscanning
 
 	//find least/most signinficant bit
-inline int msbn64		()							const;		//lookup
-inline int lsbn64		()							const; 		//de Bruijn	/ lookup								
+inline virtual int msbn64		()	const;		//lookup
+inline virtual int lsbn64		()	const; 		//de Bruijn	/ lookup								
 
 	//for looping (does not use state info)	
 inline int next_bit			(int nBit)	const;					//de Bruijn
@@ -82,7 +82,7 @@ inline int previous_bit		(int nbit)	const;					//lookup
 /////////////////
 // Popcount
 virtual	inline int popcn64	()						const;		//lookup 
-		inline int popcn64	(int nBit/* 0 based*/)	const;
+virtual	inline int popcn64	(int nBit/* 0 based*/)	const;
 /////////////////////
 //Set/Delete Bits 
 inline	void  init_bit				(int nbit);	
@@ -122,8 +122,8 @@ inline void  erase_bit				();
 /////////////////////////////
 //Boolean functions
 	inline bool is_bit		(int nbit)							const;
-	inline bool is_empty	()									const;	
-	inline bool is_empty	(int nBBL, int nBBH)				const;	
+inline virtual bool is_empty	()									const;	
+inline virtual bool is_empty	(int nBBL, int nBBH)				const;	
 	inline bool is_singleton()									const;
 	inline bool is_disjoint	(const BitBoardN& rhs)				const;
 	inline bool is_disjoint	(int first_block, int last_block,const BitBoardN& rhs)	const;

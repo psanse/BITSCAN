@@ -58,11 +58,11 @@ inline int next_bit_del				(int& nBB);								//nBB: index of bitblock in the bi
 inline int next_bit_del_pos			(int& posBB);							//posBB: position of bitblock in the collection (not the index of the element)		
 
 	//bit scan forward (non destructive)
-inline int next_bit					();
+virtual inline int next_bit			();
 inline int next_bit					(int & nBB);							//nBB: index of bitblock in the bitstring	(not in the collection)				
 
 	//bit scan backwards (non destructive)
-inline int previous_bit				(); 
+virtual inline int previous_bit		(); 
 
 	//bit scan backwards (destructive)
 inline int previous_bit_del			(); 
@@ -71,8 +71,8 @@ inline int previous_bit_del			(int& nBB);
 /////////////////
 // Popcount
 #ifdef POPCOUNT_64
-	 inline int popcn64				()	const;
-	 inline int popcn64				(int nBit)	const;							//population size from (and including) nBit
+virtual	 inline int popcn64				()	const;
+virtual	 inline int popcn64				(int nBit)	const;							//population size from (and including) nBit
 #endif
 
 //////////////////
