@@ -75,7 +75,7 @@ TEST(Sparse, member_masks) {
 
 	lhs.OR_EQ(1,rhs);
 	EXPECT_TRUE(lhs.is_bit(127));
-	EXPECT_TRUE(lhs.popcn64(), 2);
+	EXPECT_EQ(2, lhs.popcn64());
 } 
 
 TEST(Sparse_intrinsic, basics_2) {
@@ -338,14 +338,15 @@ TEST(Sparse, erase_bits) {
 	bbsp.set_bit(1, 5);	
 	bbsp.set_bit(200,205);	
 	bbsp.erase_bit(67, 69);	
-	EXPECT_TRUE(12,bbsp.popcn64());
+	bbsp.print();
+	EXPECT_EQ(11, bbsp.popcn64());
 	EXPECT_TRUE(bbsp.is_bit(200));
 
 	//first bit in range does not correspond to a block
 	bbsp.clear();
 	bbsp.set_bit(70, 75);	
 	bbsp.erase_bit(63, 70);	
-	EXPECT_TRUE(5,bbsp.popcn64());
+	EXPECT_EQ(5,bbsp.popcn64());
 	EXPECT_FALSE(bbsp.is_bit(70));
 	EXPECT_TRUE(bbsp.is_bit(71));
 }

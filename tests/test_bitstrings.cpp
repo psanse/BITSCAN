@@ -591,4 +591,15 @@ TEST(Bitstrings, block_copying){
 	EXPECT_FALSE(bb.is_bit(64));
 }
 
+TEST(Bitstrings, single_disjoint){
+	BitBoardN bb(130);
+	BitBoardN bb1(130);
+	bb.set_bit(1,10);
+	bb1.set_bit(10,20);
+	int v=EMPTY_ELEM;
+	int res=bb.single_disjoint(bb1, v);
+	EXPECT_EQ(10, v);
+	EXPECT_EQ(1, res);
+}
+
 

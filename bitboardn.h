@@ -106,7 +106,6 @@ inline void  erase_bit				();
 	BitBoardN& erase_block			(int first_block, const BitBoardN& bb_del);						//range versions
 	BitBoardN& erase_block			(int first_block, int last_block, const BitBoardN& bb_del);		//range versions
 	
-	
 ////////////////////////
 //Masking Operators (only for same block size)
 				
@@ -118,15 +117,15 @@ inline void  erase_bit				();
 	BitBoardN&  OR_EQ		(int first_block, const BitBoardN& rhs );	//in range
 		
 	BitBoardN& flip			();
-
+	int	single_disjoint		(const BitBoardN& rhs, int& vertex)			const;
 /////////////////////////////
 //Boolean functions
-	inline bool is_bit		(int nbit)							const;
-inline virtual bool is_empty	()									const;	
-inline virtual bool is_empty	(int nBBL, int nBBH)				const;	
-	inline bool is_singleton()									const;
-	inline bool is_disjoint	(const BitBoardN& rhs)				const;
-	inline bool is_disjoint	(int first_block, int last_block,const BitBoardN& rhs)	const;
+	inline bool is_bit				(int nbit)							const;
+inline virtual bool is_empty		()									const;	
+inline virtual bool is_empty		(int nBBL, int nBBH)				const;	
+	inline bool is_singleton		()									const;
+	inline bool is_disjoint			(const BitBoardN& rhs)				const;
+	inline bool is_disjoint			(int first_block, int last_block,const BitBoardN& rhs)	const;
 /////////////////////
 // I/O 
 	void print				(std::ostream& = std::cout, bool show_pc = true) const;
@@ -281,6 +280,8 @@ inline bool BitBoardN::is_disjoint	(const BitBoardN& rhs) const{
 		if(m_aBB[i]& rhs.m_aBB[i]) return false;
 return true;
 }
+
+
 
 inline bool BitBoardN::is_disjoint (int first_block, int last_block,const BitBoardN& rhs)	const{
 ///////////////////
@@ -561,6 +562,33 @@ int BitBoardN::popcn64(int nBit) const{
 	npc+= Tables::pc[val.c[0]] + Tables::pc[val.c[1]] + Tables::pc[val.c[2]] + Tables::pc[val.c[3]];
 	
 return npc;
+}
+
+
+inline int BitBoardN::single_disjoint (const BitBoardN& rhs, int& vertex) const{
+/////////////////////
+// PARAMS 
+// vertex: Single vertex which is common to lhs (this) and rhs or EMPTY_ELEM (return value MUST BE 1)
+// 
+// RETURN value: 0 if disjoint, 1 if single_disjoint, EMPTY_ELEM otherwise 
+
+
+	int pc=0;
+	vertex=EMPTY_ELEM;
+	bool first_time=true;
+	
+	for(int i=0; i<m_nBB; i++){
+		pc+=BitBoard::popc64(this->m_aBB[i] & rhs.m_aBB[i]);
+		if(pc>1){
+			vertex=EMPTY_ELEM;
+			return EMPTY_ELEM;
+		}else if(pc==1 && first_time ){  //store vertex position
+			vertex=BitBoard::lsb64_intrinsic(this->m_aBB[i] & rhs.m_aBB[i] )+ WMUL(i);
+			first_time=false;
+		}
+	}
+	
+	return pc;		//disjoint
 }
 
 #endif
