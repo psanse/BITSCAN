@@ -386,7 +386,7 @@ int BitBoardS::clear_bit (int low, int high){
 		m_aBB.erase(pl.second, m_aBB.end());
 		return 0;
 	}else if(low==EMPTY_ELEM){
-		bbh==WDIV(high); 
+		bbh=WDIV(high); 
 		ph=find_block(bbh);
 		if(ph.first){	//upper block exists
 			ph.second->bb&=Tables::mask_left[high-WMUL(bbh)];
