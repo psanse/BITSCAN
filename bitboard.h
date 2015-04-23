@@ -24,33 +24,38 @@
 
 #include "tables.h"
 #ifdef __GNUC__
-#include <x86intrin.h>										//linux specific
-#define __popcnt64 __builtin_popcountll
- static inline unsigned char _BitScanForward64(unsigned long* Index,  unsigned long long  Mask)
-    {
-        unsigned long long  Ret;
-        __asm__
-        (
-            "bsfq %[Mask], %[Ret]"
-            :[Ret] "=r" (Ret)
-            :[Mask] "mr" (Mask)
-        );
-        *Index = (unsigned long)Ret;
-        return Mask?1:0;
-    }
-    static inline unsigned char _BitScanReverse64(unsigned long* Index,  unsigned long long  Mask)
-    {
-         unsigned long long  Ret;
-        __asm__
-        (
-            "bsrq %[Mask], %[Ret]"
-            :[Ret] "=r" (Ret)
-            :[Mask] "mr" (Mask)
-        );
-        *Index = (unsigned long)Ret;
-        return Mask?1:0;
-    }
 
+#ifdef __MINGW64__
+	#define __popcnt64 __builtin_popcountll
+	#include <intrin.h>										//windows specific
+#else
+	#define __popcnt64 __builtin_popcountll
+	#include <x86intrin.h>										//linux specific
+	 static inline unsigned char _BitScanForward64(unsigned long* Index,  unsigned long long  Mask)
+		{
+			unsigned long long  Ret;
+			__asm__
+			(
+				"bsfq %[Mask], %[Ret]"
+				:[Ret] "=r" (Ret)
+				:[Mask] "mr" (Mask)
+			);
+			*Index = (unsigned long)Ret;
+			return Mask?1:0;
+		}
+		static inline unsigned char _BitScanReverse64(unsigned long* Index,  unsigned long long  Mask)
+		{
+			 unsigned long long  Ret;
+			__asm__
+			(
+				"bsrq %[Mask], %[Ret]"
+				:[Ret] "=r" (Ret)
+				:[Mask] "mr" (Mask)
+			);
+			*Index = (unsigned long)Ret;
+			return Mask?1:0;
+		}
+#endif
 #else
 #include <intrin.h>										//windows specific
 #endif
@@ -125,7 +130,7 @@ inline static BITBOARD MASK_0		(int low, int high);		//0-bit mask in the CLOSED 
 		BITBOARD b;
 	} val;				
 
-	val.b = bb_dato; //Carga unión
+	val.b = bb_dato; //Carga unisn
 
 return (Tables::pc[val.c[0]] + Tables::pc[val.c[1]] + Tables::pc[val.c[2]] + Tables::pc[val.c[3]]); //Suma de poblaciones 
 }
@@ -144,7 +149,7 @@ inline int BitBoard::popc64(const BITBOARD bb_dato){
 		BITBOARD b;
 	} val;				
 
-	val.b = bb_dato; //Carga unión
+	val.b = bb_dato; //Carga unisn
 
 	return (Tables::pc[val.c[0]] + Tables::pc[val.c[1]] + Tables::pc[val.c[2]] + Tables::pc[val.c[3]]); //Suma de poblaciones  
 #endif
