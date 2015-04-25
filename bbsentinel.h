@@ -97,7 +97,6 @@ protected:
 
 #endif
 
-
 #ifdef POPCOUNT_64
 inline int BBSentinel::popcn64() const{
 	BITBOARD pc=0;
@@ -106,12 +105,6 @@ inline int BBSentinel::popcn64() const{
 	}
 return pc;
 }
-
-
-
-
-
-
 
 //specializes the only bitscan function used
 inline
@@ -231,12 +224,6 @@ int BBSentinel::next_bit(int& nBB){
 	}
 return EMPTY_ELEM;
 }
-
-
-
-
-
-
 
 
 #endif

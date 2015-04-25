@@ -71,6 +71,7 @@ private:
 	static int nElem;																						//to cache current bitblock position in the collection (not its index ni the bitstring) 
 public:	
 	friend bool	operator ==			(const BitBoardS&, const BitBoardS&);
+	friend bool operator!=			(const BitBoardS& lhs, const BitBoardS& rhs);
 
     friend inline BitBoardS&  AND	(const BitBoardS& lhs, const BitBoardS& rhs,  BitBoardS& res);
 	friend inline BitBoardS&  AND	(int first_block, const BitBoardS& lhs, const BitBoardS& rhs,  BitBoardS& res);
@@ -903,6 +904,20 @@ int BitBoardS::init_bit (int high, const BitBoardS& bb_add){
 		}
 	}
 return 0;
+}
+
+inline
+bool operator == (const BitBoardS& lhs, const BitBoardS& rhs){
+/////////////////////
+// Simple equality check which considers exact copy of bit strings 
+// REMARKS: does not take into account information, i.e. bit blocks=0
+
+	return(lhs.m_aBB==rhs.m_aBB);
+}
+
+inline
+bool operator!=	(const BitBoardS& lhs, const BitBoardS& rhs){
+	return ! operator==(lhs, rhs);
 }
 
 #endif

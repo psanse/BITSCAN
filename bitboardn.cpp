@@ -10,14 +10,6 @@
  
 using namespace std;
 
-bool operator==	 (const BitBoardN& lhs, const BitBoardN& rhs){
-	
-	for(int i=0; i<lhs.m_nBB; i++)
-		if( lhs.m_aBB[i]!=rhs.m_aBB[i] ) return false;
-
-return true;
-}
-
 BitBoardN&  AND (const BitBoardN& lhs, const BitBoardN& rhs,  BitBoardN& res){
 	for(int i=0; i<lhs.m_nBB; i++){
 		res.m_aBB[i]=lhs.m_aBB[i] & rhs.m_aBB[i];

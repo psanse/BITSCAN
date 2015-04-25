@@ -38,17 +38,18 @@ using namespace std;
 ///////////////////////////////////
 class BitBoardN:public BBObject{
 public:	
-	/*friend bool similar			(const BitBoardN& , const BitBoardN&  , int nBitDiff);	
-	friend bool disjoint			(const BitBoardN& bb1, const BitBoardN& bb2);
-	friend bool subsumes			(const BitBoardN& bb1, const BitBoardN& bb2);*/
 
+//non standard independent operators (no allocation or copies)
 	friend bool operator==			(const BitBoardN& lhs, const BitBoardN& rhs);
-	friend BitBoardN&  AND			(const BitBoardN& lhs, const BitBoardN& rhs,  BitBoardN& res);
+	friend bool operator!=			(const BitBoardN& lhs, const BitBoardN& rhs);
+
+	friend BitBoardN&  AND			(const BitBoardN& lhs, const BitBoardN& rhs,  BitBoardN& res);							
 	friend BitBoardN&  AND			(int first_block, const BitBoardN& lhs, const BitBoardN& rhs,  BitBoardN& res);
 	friend BitBoardN&  AND			(int first_block, int last_block, const BitBoardN& lhs, const BitBoardN& rhs,  BitBoardN& res);
 
 	friend BitBoardN&  OR			(const BitBoardN& lhs, const BitBoardN& rhs,  BitBoardN& res);
 
+//constructors, initialization, assignment
 	 BitBoardN						(): m_nBB(EMPTY_ELEM),m_aBB(NULL){};										
 explicit  BitBoardN					(int popsize /*1 based*/, bool reset=true);	
 	 BitBoardN						(const BitBoardN& bbN);
@@ -57,7 +58,8 @@ virtual	~BitBoardN					();
 		 
 	void init						(int popsize, bool reset=true);										
 	void init						(int popsize, const vector<int> & );								
-virtual	BitBoardN& operator =		(const BitBoardN& );		
+virtual	BitBoardN& operator =		(const BitBoardN& );	
+
 /////////////////////
 //setters and getters (will not allocate memory)
 	
@@ -85,15 +87,15 @@ virtual	inline int popcn64	()						const;		//lookup
 virtual	inline int popcn64	(int nBit/* 0 based*/)	const;
 /////////////////////
 //Set/Delete Bits 
-inline	void  init_bit				(int nbit);	
+inline	void  init_bit				(int bit);	
 inline	int   init_bit				(int lbit, int rbit);
 		int   init_bit				(int high, const BitBoardN& bb_add);						    //copies bb_add in range [0, high] *** rename probably
 inline	void  copy_from_block		(int first_block, const BitBoardN& bb_add);						//copies from first_block (included) onwards
 inline	void  copy_up_to_block		(int last_block, const BitBoardN& bb_add);						//copies up to last_block (included)
-		 void  set_bit				(int nbit);
+		 void  set_bit				(int bit);
 inline  int	 set_bit				(int low, int high);											//closed range
 inline  void  set_bit				();
-	   void  set_bit				(const BitBoardN& bb_add);										//OR
+	   void  set_bit				(const BitBoardN& bb_add);										//similar to OR, experimental
 
 		void set_block				(int first_block, const BitBoardN& bb_add);						//OR:closed range
 		void set_block				(int first_block, int last_block,  const BitBoardN& bb_add);	//OR:closed range
@@ -101,29 +103,29 @@ inline  void  set_bit				();
 inline void  erase_bit				(int nbit);
 inline int   erase_bit				(int low, int high);
 inline void  erase_bit				();
-	BitBoardN& erase_bit			(const BitBoardN& bb_del);										//equivalent to set_difference
+	BitBoardN& erase_bit			(const BitBoardN& bb_del);										
 
 	BitBoardN& erase_block			(int first_block, const BitBoardN& bb_del);						//range versions
 	BitBoardN& erase_block			(int first_block, int last_block, const BitBoardN& bb_del);		//range versions
 	
 ////////////////////////
-//Masking Operators (only for same block size)
+//member operators (must have same block size)
 				
-	BitBoardN& operator &=	(const BitBoardN& );			//Equivalent to set_intersection
-	BitBoardN& operator |=	(const BitBoardN& );			//Equivalente to set_union
-	BitBoardN& operator ^=	(const BitBoardN& );			//Equivalente to set_symmetric_difference
+	BitBoardN& operator &=	(const BitBoardN& );													//bitset_intersection
+	BitBoardN& operator |=	(const BitBoardN& );													//bitset_union
+	BitBoardN& operator ^=	(const BitBoardN& );													//bitet symmetric_difference
 
-	BitBoardN&  AND_EQ		(int first_block, const BitBoardN& rhs );	//in range
-	BitBoardN&  OR_EQ		(int first_block, const BitBoardN& rhs );	//in range
+	BitBoardN&  AND_EQ		(int first_block, const BitBoardN& rhs );								//AND: range
+	BitBoardN&  OR_EQ		(int first_block, const BitBoardN& rhs );								//OR:  range
 		
 	BitBoardN& flip			();
-	int	single_disjoint		(const BitBoardN& rhs, int& vertex)			const;
+	int	single_disjoint		(const BitBoardN& rhs, int& vertex)			const;						//non disjoint by single element
 /////////////////////////////
 //Boolean functions
 	inline bool is_bit				(int nbit)							const;
 inline virtual bool is_empty		()									const;	
 inline virtual bool is_empty		(int nBBL, int nBBH)				const;	
-	inline bool is_singleton		()									const;
+	inline bool is_singleton		()									const;						//only one element
 	inline bool is_disjoint			(const BitBoardN& rhs)				const;
 	inline bool is_disjoint			(int first_block, int last_block,const BitBoardN& rhs)	const;
 /////////////////////
@@ -589,6 +591,20 @@ inline int BitBoardN::single_disjoint (const BitBoardN& rhs, int& vertex) const{
 	}
 	
 	return pc;		//disjoint
+}
+
+inline
+bool operator==	(const BitBoardN& lhs, const BitBoardN& rhs){
+	
+	for(int i=0; i<lhs.m_nBB; i++)
+		if( lhs.m_aBB[i]!=rhs.m_aBB[i] ) return false;
+
+return true;
+}
+
+inline
+bool operator!=	(const BitBoardN& lhs, const BitBoardN& rhs){
+	 return ! operator==(lhs, rhs);
 }
 
 #endif

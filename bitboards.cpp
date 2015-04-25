@@ -739,13 +739,7 @@ BitBoardS& BitBoardS::operator = (const BitBoardS& bbs){
 return *this;
 }
 
-bool operator == (const BitBoardS& lhs, const BitBoardS& rhs){
-/////////////////////
-// Simple equality check which considers exact copy of bit strings 
-// REMARKS: does not take into account information, i.e. bit blocks=0
 
-	return(lhs.m_aBB==rhs.m_aBB);
-}
 
 
 

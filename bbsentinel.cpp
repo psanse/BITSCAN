@@ -275,12 +275,12 @@ BBSentinel& BBSentinel::operator= (const  BBSentinel& bbs){
 
 }
 
-BBSentinel& BBSentinel::operator&=	(const BitBoardN& bbn){
+BBSentinel& BBSentinel::operator&=	(const  BitBoardN& bbn){
 //////////////////
 // AND operation in the range of the sentinels
 
 	for(int i=m_BBL; i<=m_BBH; i++){
-		this->m_aBB[i]&=bbn.get_bitboard(i);
+		this->m_aBB[i] &= bbn.get_bitboard(i);
 	}
 
 	return  *this;
