@@ -78,6 +78,16 @@ TEST(Bitstrings, boolean_properties){
 	
 	bb1.set_bit(64);
 	EXPECT_FALSE(bb.is_disjoint(bb1));
+
+	BitBoardN bb2(130);
+	bb2.set_bit(11);				//in common in bb1 and bb2 but not bb
+	bb2.set_bit(22);
+	bb2.set_bit(66);
+	EXPECT_TRUE(bb.is_disjoint(bb1, bb2));
+
+	bb.set_bit(11);
+	EXPECT_FALSE(bb.is_disjoint(bb1, bb2));
+
 }
 
 TEST(Bitstrings, set_bit_range){
