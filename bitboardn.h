@@ -284,7 +284,7 @@ inline bool BitBoardN::is_disjoint	(const BitBoardN& rhs) const{
 return true;
 }
 
-inline bool BitBoardN::is_disjoint	(const BitBoardN& lhs, const const BitBoardN& rhs)	const{
+inline bool BitBoardN::is_disjoint	(const BitBoardN& lhs,  const BitBoardN& rhs)	const{
 	for(int i=0; i<m_nBB; ++i)
 		if(m_aBB[i] & lhs.m_aBB[i] & rhs.m_aBB[i]) return false;
 return true;
