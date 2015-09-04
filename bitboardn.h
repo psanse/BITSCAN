@@ -128,7 +128,7 @@ inline virtual bool is_empty		(int nBBL, int nBBH)				const;
 	inline bool is_singleton		()									const;						//only one element
 	inline bool is_disjoint			(const BitBoardN& rhs)				const;
 	inline bool is_disjoint			(int first_block, int last_block,const BitBoardN& rhs)	const;
-	inline bool is_disjoint			(const BitBoardN& a, const const BitBoardN& b)		const;		//no bit in common with both a and b (not available in sparse bitsets)
+	inline bool is_disjoint			(const BitBoardN& a, const  BitBoardN& b)		const;		//no bit in common with both a and b (not available in sparse bitsets)
 /////////////////////
 // I/O 
 	void print				(std::ostream& = std::cout, bool show_pc = true) const;
