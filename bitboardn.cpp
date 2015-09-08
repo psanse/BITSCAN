@@ -182,35 +182,6 @@ return ;
 }
 
 
-BitBoardN& BitBoardN::erase_bit (const BitBoardN& bbn){
-//////////////////////////////
-// deletes bbn from current bitstring
-
-	for(int i=0; i<m_nBB; i++)
-			m_aBB[i] &= ~ bbn.m_aBB[i];
-return *this;
-}
-
-BitBoardN& BitBoardN::erase_block	(int first_block, const BitBoardN& bb_del){
-/////////////////////////////
-// deletes from block_first (included) to the end of the bitsring
-	for(int i=first_block; i<m_nBB; i++)
-			m_aBB[i] &= ~ bb_del.m_aBB[i];
-return *this;
-}
-
-BitBoardN& BitBoardN::erase_block(int block_first, int block_last, const BitBoardN& bb_del){
-/////////////////////////////
-// deletes from block_first (CLOSED RANGE) the 1-bits in bb_del
-// assert(block_first<=block_last) 
-// 
-// REMARKS: population size not checked
-
-	for(int i=block_first; i<=block_last; i++)
-			m_aBB[i] &= ~ bb_del.m_aBB[i];
-
-return *this;
-}
 
 //void BitBoardN::add_bitstring_left(){
 /////////////////////

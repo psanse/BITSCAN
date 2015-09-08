@@ -103,10 +103,10 @@ inline  void  set_bit				();
 inline void  erase_bit				(int nbit);
 inline int   erase_bit				(int low, int high);
 inline void  erase_bit				();
-	BitBoardN& erase_bit			(const BitBoardN& bb_del);										
+inline	BitBoardN& erase_bit			(const BitBoardN& bb_del);										
 
-	BitBoardN& erase_block			(int first_block, const BitBoardN& bb_del);						//range versions
-	BitBoardN& erase_block			(int first_block, int last_block, const BitBoardN& bb_del);		//range versions
+inline	BitBoardN& erase_block			(int first_block, const BitBoardN& bb_del);						//range versions
+inline	BitBoardN& erase_block			(int first_block, int last_block, const BitBoardN& bb_del);		//range versions
 	
 ////////////////////////
 //member operators (must have same block size)
@@ -119,7 +119,7 @@ inline void  erase_bit				();
 	BitBoardN&  OR_EQ		(int first_block, const BitBoardN& rhs );								//OR:  range
 		
 	BitBoardN& flip			();
-	int	single_disjoint		(const BitBoardN& rhs, int& vertex)			const;						//non disjoint by single element
+inline	int	single_disjoint		(const BitBoardN& rhs, int& vertex)			const;						//non disjoint by single element
 /////////////////////////////
 //Boolean functions
 	inline bool is_bit				(int nbit)							const;
@@ -612,6 +612,39 @@ return true;
 inline
 bool operator!=	(const BitBoardN& lhs, const BitBoardN& rhs){
 	 return ! operator==(lhs, rhs);
+}
+
+inline
+BitBoardN& BitBoardN::erase_bit (const BitBoardN& bbn){
+//////////////////////////////
+// deletes bbn from current bitstring
+
+	for(int i=0; i<m_nBB; i++)
+			m_aBB[i] &= ~ bbn.m_aBB[i];
+return *this;
+}
+
+inline
+BitBoardN& BitBoardN::erase_block	(int first_block, const BitBoardN& bb_del){
+/////////////////////////////
+// deletes from block_first (included) to the end of the bitsring
+	for(int i=first_block; i<m_nBB; i++)
+			m_aBB[i] &= ~ bb_del.m_aBB[i];
+return *this;
+}
+
+inline
+BitBoardN& BitBoardN::erase_block(int block_first, int block_last, const BitBoardN& bb_del){
+/////////////////////////////
+// deletes from block_first (CLOSED RANGE) the 1-bits in bb_del
+// assert(block_first<=block_last) 
+// 
+// REMARKS: population size not checked
+
+	for(int i=block_first; i<=block_last; i++)
+			m_aBB[i] &= ~ bb_del.m_aBB[i];
+
+return *this;
 }
 
 #endif
