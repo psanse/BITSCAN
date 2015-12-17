@@ -38,6 +38,17 @@ BitBoardN&   AND (int first_block, int last_block, const BitBoardN& lhs, const B
 return res;
 }
 
+BitBoardN&  ERASE(const BitBoardN& lhs, const BitBoardN& rhs,  BitBoardN& res){
+/////////////
+// removes rhs FROM lhs
+
+	for(int i=0; i<lhs.m_nBB; i++){
+		res.m_aBB[i]=lhs.m_aBB[i] &~ rhs.m_aBB[i];
+	}
+
+return res;
+}
+
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////

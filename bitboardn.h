@@ -48,6 +48,8 @@ public:
 	friend BitBoardN&  AND			(int first_block, int last_block, const BitBoardN& lhs, const BitBoardN& rhs,  BitBoardN& res);
 
 	friend BitBoardN&  OR			(const BitBoardN& lhs, const BitBoardN& rhs,  BitBoardN& res);
+	friend BitBoardN&  ERASE		(const BitBoardN& lhs, const BitBoardN& rhs,  BitBoardN& res);				//removes rhs from lhs
+
 
 //constructors, initialization, assignment
 	 BitBoardN						(): m_nBB(EMPTY_ELEM),m_aBB(NULL){};										
