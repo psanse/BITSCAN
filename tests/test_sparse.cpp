@@ -716,9 +716,43 @@ TEST(Sparse, copy_up_to_some_bit) {
 	EXPECT_EQ(7, bbcopy.popcn64());
 	EXPECT_TRUE(bbcopy.is_bit(9000));
 
-
 	bbcopy.init_bit(9999, bbsp);
 	EXPECT_TRUE(bbcopy==bbsp);
+}
+
+TEST(Sparse, copy_in_closed_range){
+	BBIntrinS bbsp(10000);
+	BBIntrinS bbcopy(10000);
+	bbsp.set_bit(0);
+	bbsp.set_bit(1);
+	bbsp.set_bit(2);
+	bbsp.set_bit(126);
+	bbsp.set_bit(127);
+	bbsp.set_bit(1000);
+	bbsp.set_bit(9000);
+	bbsp.set_bit(9999);
+
+	bbcopy.init_bit(126, 1000, bbsp);
+	bbcopy.print();
+	EXPECT_EQ(3, bbcopy.popcn64());
+	EXPECT_TRUE(bbcopy.is_bit(126));
+	EXPECT_TRUE(bbcopy.is_bit(127));
+	EXPECT_TRUE(bbcopy.is_bit(1000));
+
+	bbcopy.clear();
+	bbcopy.init_bit(127, 129, bbsp);
+	EXPECT_EQ(1, bbcopy.popcn64());
+	EXPECT_TRUE(bbcopy.is_bit(127));
+
+	bbcopy.clear();
+	bbcopy.init_bit(0, 10000, bbsp);
+	EXPECT_TRUE( bbcopy==bbsp);
+
+	bbcopy.clear();
+	bbcopy.init_bit(9000, 9999, bbsp);
+	EXPECT_EQ(2, bbcopy.popcn64());
+	EXPECT_TRUE(bbcopy.is_bit(9000));
+	EXPECT_TRUE(bbcopy.is_bit(9999));
 }
 
 TEST(Sparse, keep_operations) {

@@ -131,6 +131,7 @@ virtual inline	 int popcn64		(int nBit)				const;
 		int   init_bit				(int nbit);	
 		int   init_bit				(int lbit, int rbit);	
 		int   init_bit				(int last_bit, const BitBoardS& bb_add);							//copies up to last_bit included
+		int   init_bit				(int lbit, int rbit, const BitBoardS& bb_add);						//copies up to last_bit included
 inline	int   set_bit				(int nbit);															//ordered insertion by bit block index
 		int	  set_bit				(int lbit, int rbit);												//CLOSED range
 BitBoardS&    set_bit				(const BitBoardS& bb_add);											//OR
@@ -932,6 +933,55 @@ int BitBoardS::init_bit (int high, const BitBoardS& bb_add){
 		}
 	}
 return 0;
+}
+
+inline
+int  BitBoardS::init_bit (int low, int high,  const BitBoardS& bb_add){
+/////////////
+// fast copying of bb_add in the corresponding CLOSED range
+// date of creation: 19/12/15
+
+	//***ASSERT
+
+	m_aBB.clear();
+	int	bbl=WDIV(low);
+	int	bbh=WDIV(high);
+
+
+	//finds low bitblock and updates forward
+	velem_cit itl=lower_bound(bb_add.begin(), bb_add.end(), elem(bbl), elem_less());
+	if(itl!=bb_add.end()){
+		if(itl->index==bbl){	//lower block exists
+			if(bbh==bbl){		//case update in the same bitblock
+				BITBOARD bb_low=itl->bb & ~ Tables::mask_right[low-WMUL(bbl)];
+				BITBOARD bb_high=itl->bb & ~Tables::mask_left[high-WMUL(bbh)];
+				m_aBB.push_back(elem(bbh, bb_low|bb_high));
+				return 0;
+			}else{
+				//add lower block
+				m_aBB.push_back(elem(bbl, itl->bb &~ Tables::mask_right[low-WMUL(bbl)] ));
+				++itl;
+			}
+		}
+
+		//copied the rest if elements
+		for(; itl!=bb_add.end(); ++itl){
+			if(itl->index>=bbh){		//exit condition
+				if(itl->index==bbh){	
+					BITBOARD bb_low=itl->bb & ~ Tables::mask_right[low-WMUL(bbl)];
+					BITBOARD bb_high=itl->bb & ~Tables::mask_left[high-WMUL(bbh)];
+					m_aBB.push_back(elem(bbh, bb_low|bb_high));				
+				}else{
+					m_aBB.push_back(elem(bbh, itl->bb&~Tables::mask_left[high-WMUL(bbh)]));
+				}
+			return 0;
+			}
+			//copies the element as is
+			m_aBB.push_back(*itl);
+		}
+	}
+
+return 0;		//should not reach here
 }
 
 inline
