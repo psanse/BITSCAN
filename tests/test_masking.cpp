@@ -272,9 +272,39 @@ TEST(Masks, ERASE){
 	EXPECT_FALSE(bbsERASE.is_bit(10));
 	EXPECT_FALSE(bbsERASE.is_bit(64));
 	EXPECT_EQ(1, bbsERASE.popcn64());
+}
+
+TEST(Masks, ERASE_extreme_cases){
+///////////
+// date: 21/12/15
+
+//non-sparse
+	bitarray bb(130);				
+	bitarray bb1(130);				//empty
+	bitarray bbERASE(130);
+	bbERASE.set_bit(129);			
+	
+	bb.set_bit(10);
+	bb.set_bit(20);
+	bb.set_bit(64);	
+	
+	//ERASE
+	cout<<ERASE(bb, bb1, bbERASE)<<endl;
+	EXPECT_TRUE(bb==bbERASE);
+
+//sparse
+	sparse_bitarray bbs(130);
+	sparse_bitarray bbs1(130);			//empty
+	sparse_bitarray bbsERASE(130);
 
 
+	bbs.set_bit(10);
+	bbs.set_bit(64);
+	bbs.set_bit(100);
+
 	
-	
+	//ERASE
+	cout<<ERASE(bbs, bbs1, bbsERASE)<<endl;
+	EXPECT_TRUE(bbs==bbsERASE);
 }
 

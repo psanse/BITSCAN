@@ -687,14 +687,13 @@ BitBoardS&  ERASE (const BitBoardS& lhs, const BitBoardS& rhs,  BitBoardS& res){
 // removes rhs from lhs
 // date of creation: 17/12/15
 
-	int i2=0;
-	res.erase_bit();						//experimental (and simplest solution)
-	const int MAX=rhs.m_aBB.size()-1;
-
-	//empty check of rhs required, the way it is implemented
-	if(MAX==EMPTY_ELEM) return res;
 	
+	const int MAX=rhs.m_aBB.size()-1;
+	if(MAX==EMPTY_ELEM){ return (res=lhs);  }		//copy before returning
+	res.erase_bit();
+
 	//this works better if lhs is as sparse as possible (iterating first over rhs is illogical here becuase the operation is not symmetrical)
+	int i2=0;
 	for (int i1 = 0; i1 < lhs.m_aBB.size();i1++){
 		for(; i2<MAX && rhs.m_aBB[i2].index<lhs.m_aBB[i1].index; i2++){}
 		
