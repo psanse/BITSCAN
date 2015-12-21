@@ -700,9 +700,10 @@ BitBoardS&  ERASE (const BitBoardS& lhs, const BitBoardS& rhs,  BitBoardS& res){
 		//update before either of the bitstrings has reached its end
 		if(lhs.m_aBB[i1].index==rhs.m_aBB[i2].index){
 				res.m_aBB.push_back(BitBoardS::elem(lhs.m_aBB[i1].index, lhs.m_aBB[i1].bb &~ rhs.m_aBB[i2].bb));
+		}else{
+			res.m_aBB.push_back(BitBoardS::elem(lhs.m_aBB[i1].index, lhs.m_aBB[i1].bb));
 		}
 	}
-
 return res;
 }
 

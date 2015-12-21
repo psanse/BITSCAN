@@ -306,5 +306,21 @@ TEST(Masks, ERASE_extreme_cases){
 	//ERASE
 	cout<<ERASE(bbs, bbs1, bbsERASE)<<endl;
 	EXPECT_TRUE(bbs==bbsERASE);
+
+//erase when no blocks in same index: simple copy
+
+	bbs1.erase_bit();
+	bbs1.set_bit(100);
+
+	bbs.print();
+	bbs1.print();
+
+	//ERASE
+	cout<<ERASE(bbs, bbs1, bbsERASE)<<endl;
+	EXPECT_TRUE(bbsERASE.is_bit(10));
+	EXPECT_TRUE(bbsERASE.is_bit(64));
+	EXPECT_EQ(2, bbsERASE.popcn64());
 }
+
+
 
