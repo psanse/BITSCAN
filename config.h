@@ -43,7 +43,7 @@
  
 //////////////////////
 // precomputed tables
-#define CACHED_INDEX_OPERATIONS								//uses extra storage space for fast bitscanning (DEFAULT)
+//#define CACHED_INDEX_OPERATIONS								//uses extra storage space for fast bitscanning (DEFAULT)
 
 #ifdef CACHED_INDEX_OPERATIONS
 	#define MAX_CACHED_INDEX		15001					//size of cached WMOD, WDIV, WMUL indexes (number of bits)
