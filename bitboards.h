@@ -953,9 +953,7 @@ int  BitBoardS::init_bit (int low, int high,  const BitBoardS& bb_add){
 	if(itl!=bb_add.end()){
 		if(itl->index==bbl){	//lower block exists
 			if(bbh==bbl){		//case update in the same bitblock
-				BITBOARD bb_low=itl->bb & ~ Tables::mask_right[low-WMUL(bbl)];
-				BITBOARD bb_high=itl->bb & ~Tables::mask_left[high-WMUL(bbh)];
-				m_aBB.push_back(elem(bbh, bb_low|bb_high));
+				m_aBB.push_back(elem( bbh, itl->bb & BitBoard::MASK_1(low-WMUL(bbl), high-WMUL(bbh)) ));
 				return 0;
 			}else{
 				//add lower block
@@ -967,10 +965,8 @@ int  BitBoardS::init_bit (int low, int high,  const BitBoardS& bb_add){
 		//copied the rest if elements
 		for(; itl!=bb_add.end(); ++itl){
 			if(itl->index>=bbh){		//exit condition
-				if(itl->index==bbh){	
-					BITBOARD bb_low=itl->bb & ~ Tables::mask_right[low-WMUL(bbl)];
-					BITBOARD bb_high=itl->bb & ~Tables::mask_left[high-WMUL(bbh)];
-					m_aBB.push_back(elem(bbh, bb_low|bb_high));				
+				if(itl->index==bbl){	
+					m_aBB.push_back(elem( bbh, itl->bb & BitBoard::MASK_1(low-WMUL(bbl), high-WMUL(bbh)) ));
 				}else{
 					m_aBB.push_back(elem(bbh, itl->bb&~Tables::mask_left[high-WMUL(bbh)]));
 				}

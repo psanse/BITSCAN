@@ -753,6 +753,16 @@ TEST(Sparse, copy_in_closed_range){
 	EXPECT_EQ(2, bbcopy.popcn64());
 	EXPECT_TRUE(bbcopy.is_bit(9000));
 	EXPECT_TRUE(bbcopy.is_bit(9999));
+
+	bbcopy.clear();
+	bbcopy.init_bit(0, 0, bbsp);
+	EXPECT_EQ(1, bbcopy.popcn64());
+	EXPECT_TRUE(bbcopy.is_bit(0));
+
+	bbcopy.clear();
+	bbcopy.init_bit(9999, 9999, bbsp);
+	EXPECT_EQ(1, bbcopy.popcn64());
+	EXPECT_TRUE(bbcopy.is_bit(9999));
 }
 
 TEST(Sparse, keep_operations) {
