@@ -939,7 +939,7 @@ inline
 int  BitBoardS::init_bit (int low, int high,  const BitBoardS& bb_add){
 /////////////
 // fast copying of bb_add in the corresponding CLOSED range
-// date of creation: 19/12/15
+// date of creation: 19/12/15 (bug corrected in 6/01/2016)
 
 	//***ASSERT
 
@@ -965,9 +965,7 @@ int  BitBoardS::init_bit (int low, int high,  const BitBoardS& bb_add){
 		//copied the rest if elements
 		for(; itl!=bb_add.end(); ++itl){
 			if(itl->index>=bbh){		//exit condition
-				if(itl->index==bbl){	
-					m_aBB.push_back(elem( bbh, itl->bb & BitBoard::MASK_1(low-WMUL(bbl), high-WMUL(bbh)) ));
-				}else{
+				if(itl->index==bbh){	
 					m_aBB.push_back(elem(bbh, itl->bb&~Tables::mask_left[high-WMUL(bbh)]));
 				}
 			return 0;

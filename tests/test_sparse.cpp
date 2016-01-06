@@ -765,6 +765,25 @@ TEST(Sparse, copy_in_closed_range){
 	EXPECT_TRUE(bbcopy.is_bit(9999));
 }
 
+TEST(Sparse, copy_in_closed_range_special_cases){
+	BBIntrinS bbsp(120);
+	BBIntrinS bbcopy(120);
+	bbsp.set_bit(64);
+
+	bbcopy.init_bit(0, 51, bbsp);
+	EXPECT_EQ(0, bbcopy.popcn64());
+
+	bbcopy.clear();
+	bbcopy.init_bit(64, 65, bbsp);
+	EXPECT_EQ(1, bbcopy.popcn64());
+	EXPECT_TRUE(64, bbcopy.is_bit(64));
+
+	bbcopy.clear();
+	bbcopy.init_bit(63, 64, bbsp);
+	EXPECT_EQ(1, bbcopy.popcn64());
+	EXPECT_TRUE(64, bbcopy.is_bit(64));
+}
+
 TEST(Sparse, keep_operations) {
 	BBIntrinS bbsp(10000);
 	BBIntrinS bbkeep(10000);
