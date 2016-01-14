@@ -56,10 +56,10 @@ virtual ~BBIntrin					(){}
 //////////////////////////////
 // bitscanning
 
-#ifdef POPCOUNT_64
+
 inline virtual int lsbn64			() const;
 inline virtual int msbn64			() const; 
-#endif
+
 
 	//bit scan forward (destructive)
 virtual	int init_scan					(scan_types);	
@@ -79,10 +79,10 @@ virtual inline int previous_bit		();
 	//bit scan backwards (destructive)
  virtual inline int previous_bit_del		(); 
 
-#ifdef POPCOUNT_64
+
 virtual inline int next_bit			(int &); 
 virtual	inline int next_bit			(int &,  BBIntrin& ); 
-#endif
+
 
 inline int previous_bit_del				(int& nBB);
 inline int previous_bit_del				(int& nBB,  BBIntrin& del ); 
@@ -104,8 +104,36 @@ virtual	 inline int popcn64				(int nBit/*0 based*/)	const;
 // INLINE FUNCTIONS
 // 
 ////////////////////////
-
 #ifdef POPCOUNT_64
+inline int BBIntrin::popcn64() const{
+	BITBOARD pc=0;
+	for(int i=0; i<m_nBB; i++){
+		pc+=__popcnt64(m_aBB[i]);
+	}
+return pc;
+}
+
+
+inline int BBIntrin::popcn64(int nBit) const{
+/////////////////////////
+// Population size from nBit(included) onwards
+	
+	BITBOARD pc=0;
+	
+	int nBB=WDIV(nBit);
+	for(int i=nBB+1; i<m_nBB; i++){
+		pc+=__popcnt64(m_aBB[i]);
+	}
+
+	//special case of nBit bit block
+	BITBOARD bb=m_aBB[nBB]&~Tables::mask_right[WMOD(nBit)];
+	pc+=__popcnt64(bb);
+
+return pc;
+}
+
+#endif
+
 inline int BBIntrin::next_bit(int &nBB_new)  {
 ////////////////////////////
 // Date:23/3/2012
@@ -196,37 +224,7 @@ inline int BBIntrin::lsbn64() const{
 return EMPTY_ELEM;
 }
 
-#endif
 
-#ifdef POPCOUNT_64
-inline int BBIntrin::popcn64() const{
-	BITBOARD pc=0;
-	for(int i=0; i<m_nBB; i++){
-		pc+=__popcnt64(m_aBB[i]);
-	}
-return pc;
-}
-
-
-inline int BBIntrin::popcn64(int nBit) const{
-/////////////////////////
-// Population size from nBit(included) onwards
-	
-	BITBOARD pc=0;
-	
-	int nBB=WDIV(nBit);
-	for(int i=nBB+1; i<m_nBB; i++){
-		pc+=__popcnt64(m_aBB[i]);
-	}
-
-	//special case of nBit bit block
-	BITBOARD bb=m_aBB[nBB]&~Tables::mask_right[WMOD(nBit)];
-	pc+=__popcnt64(bb);
-
-return pc;
-}
-
-#endif
 
 inline int BBIntrin::next_bit_del() {
 ////////////////////////////

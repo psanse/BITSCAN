@@ -22,8 +22,8 @@
 #define WORD_SIZE			64								//DO NOT CHANGE
 
 //popcount
-#define POPCOUNT_64											//will use intrinsic _popcn64 function (DEFAULT)
-//#undef  POPCOUNT_64										//will use lookup table popcount function
+//#define POPCOUNT_64										//will use intrinsic _popcn64 function (DEFAULT)
+#undef  POPCOUNT_64											//will use lookup table popcount function
 
 //bitscanning implementation choice
 #define DE_BRUIJN
