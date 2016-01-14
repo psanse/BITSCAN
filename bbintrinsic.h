@@ -55,26 +55,35 @@ virtual ~BBIntrin					(){}
 	
 //////////////////////////////
 // bitscanning
+
+#ifdef POPCOUNT_64
 inline virtual int lsbn64			() const;
 inline virtual int msbn64			() const; 
+#endif
 
 	//bit scan forward (destructive)
 virtual	int init_scan					(scan_types);	
 virtual	int init_scan_from			(int from, scan_types);
+
 virtual inline int next_bit_del		(); 												
 virtual inline int next_bit_del		(int& nBB /* table index*/); 
 virtual inline int next_bit_del		(int& nBB,  BBIntrin& bbN_del); 	 
 
+
 	//bit scan forward (non destructive)
 virtual inline int next_bit			();
-virtual inline int next_bit			(int &); 
-virtual	inline int next_bit			(int &,  BBIntrin& ); 
 
 	//bit scan backwards (non destructive)
 virtual inline int previous_bit		(); 
 
 	//bit scan backwards (destructive)
  virtual inline int previous_bit_del		(); 
+
+#ifdef POPCOUNT_64
+virtual inline int next_bit			(int &); 
+virtual	inline int next_bit			(int &,  BBIntrin& ); 
+#endif
+
 inline int previous_bit_del				(int& nBB);
 inline int previous_bit_del				(int& nBB,  BBIntrin& del ); 
 
@@ -96,6 +105,7 @@ virtual	 inline int popcn64				(int nBit/*0 based*/)	const;
 // 
 ////////////////////////
 
+#ifdef POPCOUNT_64
 inline int BBIntrin::next_bit(int &nBB_new)  {
 ////////////////////////////
 // Date:23/3/2012
@@ -157,6 +167,124 @@ return EMPTY_ELEM;
 }
 
 
+inline int BBIntrin::msbn64() const{
+////////////////////////////
+//
+// Date: 30/3/12
+// Return the last bit
+// 
+// COMMENTS: New variable static scan which stores index of every BB
+
+	 unsigned long posInBB;
+
+	for(int i=m_nBB-1; i>=0; i--){
+		//Siempre me queda la duda mas de si es mas eficiente comparar con 0
+		if(_BitScanReverse64(&posInBB,m_aBB[i]))
+			return (posInBB+WMUL(i));
+	}
+	
+return EMPTY_ELEM;  
+}
+
+	
+inline int BBIntrin::lsbn64() const{
+	unsigned long posBB;
+	for(int i=0; i<m_nBB; i++){
+		if(_BitScanForward64(&posBB, m_aBB[i]))
+			return(posBB+ WMUL(i));	
+	}
+return EMPTY_ELEM;
+}
+
+#endif
+
+#ifdef POPCOUNT_64
+inline int BBIntrin::popcn64() const{
+	BITBOARD pc=0;
+	for(int i=0; i<m_nBB; i++){
+		pc+=__popcnt64(m_aBB[i]);
+	}
+return pc;
+}
+
+
+inline int BBIntrin::popcn64(int nBit) const{
+/////////////////////////
+// Population size from nBit(included) onwards
+	
+	BITBOARD pc=0;
+	
+	int nBB=WDIV(nBit);
+	for(int i=nBB+1; i<m_nBB; i++){
+		pc+=__popcnt64(m_aBB[i]);
+	}
+
+	//special case of nBit bit block
+	BITBOARD bb=m_aBB[nBB]&~Tables::mask_right[WMOD(nBit)];
+	pc+=__popcnt64(bb);
+
+return pc;
+}
+
+#endif
+
+inline int BBIntrin::next_bit_del() {
+////////////////////////////
+//
+// Date: 23/3/12
+// BitScan with Delete (D- erase the bit scanned) and Intrinsic
+// 
+// COMMENTS: New variable static scan which stores index of every BB
+
+	 unsigned long posInBB;
+
+	for(int i=m_scan.bbi; i<m_nBB; i++)	{
+		if(_BitScanForward64(&posInBB,m_aBB[i])){
+			m_scan.bbi=i;
+			m_aBB[i]&=~Tables::mask[posInBB];			//Deletes the current bit before returning
+			return (posInBB+WMUL(i));
+		}
+	}
+	
+return EMPTY_ELEM;  
+}
+
+
+inline int BBIntrin::next_bit_del(int& nBB) {
+//////////////
+// Also return the number of table
+	unsigned long posInBB;
+
+	for(int i=m_scan.bbi; i<m_nBB; i++)	{
+		if(_BitScanForward64(&posInBB,m_aBB[i])){
+			m_scan.bbi=i;
+			m_aBB[i]&=~Tables::mask[posInBB];			//Deleting before the return
+			nBB=i;
+			return (posInBB+WMUL(i));
+		}
+	}
+	
+return EMPTY_ELEM;  
+}
+
+inline int BBIntrin::next_bit_del(int& nBB, BBIntrin& bbN_del) {
+//////////////
+// BitScan DI it also erase the returned bit of the table passed
+	unsigned long posInBB;
+
+	for(int i=m_scan.bbi; i<m_nBB; i++){
+		if(_BitScanForward64(&posInBB,m_aBB[i])){
+			m_scan.bbi=i;
+			m_aBB[i]&=~Tables::mask[posInBB];					//Deleting before the return
+			bbN_del.m_aBB[i]&=~Tables::mask[posInBB];
+			nBB=i;
+			return (posInBB+WMUL(i));
+		}
+	}
+	
+return EMPTY_ELEM;  
+}
+
 inline int BBIntrin::next_bit() {
 ////////////////////////////
 // Date:23/3/2012
@@ -185,6 +313,7 @@ inline int BBIntrin::next_bit() {
 return EMPTY_ELEM;
 }
 
+
 inline int BBIntrin::previous_bit		() {
 ////////////////////////////
 // Date:13/4/2012
@@ -211,6 +340,22 @@ inline int BBIntrin::previous_bit		() {
 	
 return EMPTY_ELEM;
 }
+
+inline int BBIntrin::previous_bit_del() {
+//////////////
+// BitScan DI 
+	unsigned long posInBB;
+
+	for(int i=m_scan.bbi; i>=0; i--){
+		if(_BitScanReverse64(&posInBB,m_aBB[i])){
+			m_scan.bbi=i;
+			m_aBB[i]&=~Tables::mask[posInBB];			//Deleting before the return
+			return (posInBB+WMUL(i));
+		}
+	}
+return EMPTY_ELEM;  
+}
+
 inline int BBIntrin::previous_bit_del(int& nBB, BBIntrin& del) {
 //////////////
 // BitScan DI it also erase the returned bit of the table passed
@@ -243,21 +388,6 @@ inline int BBIntrin::previous_bit_del(int& nBB) {
 		}
 	}
 	
-return EMPTY_ELEM;  
-}
-
-inline int BBIntrin::previous_bit_del() {
-//////////////
-// BitScan DI 
-	unsigned long posInBB;
-
-	for(int i=m_scan.bbi; i>=0; i--){
-		if(_BitScanReverse64(&posInBB,m_aBB[i])){
-			m_scan.bbi=i;
-			m_aBB[i]&=~Tables::mask[posInBB];			//Deleting before the return
-			return (posInBB+WMUL(i));
-		}
-	}
 return EMPTY_ELEM;  
 }
 
@@ -305,121 +435,7 @@ return 0;
 }
 
 
-inline int BBIntrin::next_bit_del() {
-////////////////////////////
-//
-// Date: 23/3/12
-// BitScan with Delete (D- erase the bit scanned) and Intrinsic
-// 
-// COMMENTS: New variable static scan which stores index of every BB
 
-	 unsigned long posInBB;
-
-	for(int i=m_scan.bbi; i<m_nBB; i++)	{
-		if(_BitScanForward64(&posInBB,m_aBB[i])){
-			m_scan.bbi=i;
-			m_aBB[i]&=~Tables::mask[posInBB];			//Deletes the current bit before returning
-			return (posInBB+WMUL(i));
-		}
-	}
-	
-return EMPTY_ELEM;  
-}
-
-
-inline int BBIntrin::msbn64() const{
-////////////////////////////
-//
-// Date: 30/3/12
-// Return the last bit
-// 
-// COMMENTS: New variable static scan which stores index of every BB
-
-	 unsigned long posInBB;
-
-	for(int i=m_nBB-1; i>=0; i--){
-		//Siempre me queda la duda mas de si es mas eficiente comparar con 0
-		if(_BitScanReverse64(&posInBB,m_aBB[i]))
-			return (posInBB+WMUL(i));
-	}
-	
-return EMPTY_ELEM;  
-}
-
-
-inline int BBIntrin::next_bit_del(int& nBB) {
-//////////////
-// Also return the number of table
-	unsigned long posInBB;
-
-	for(int i=m_scan.bbi; i<m_nBB; i++)	{
-		if(_BitScanForward64(&posInBB,m_aBB[i])){
-			m_scan.bbi=i;
-			m_aBB[i]&=~Tables::mask[posInBB];			//Deleting before the return
-			nBB=i;
-			return (posInBB+WMUL(i));
-		}
-	}
-	
-return EMPTY_ELEM;  
-}
-
-inline int BBIntrin::next_bit_del(int& nBB, BBIntrin& bbN_del) {
-//////////////
-// BitScan DI it also erase the returned bit of the table passed
-	unsigned long posInBB;
-
-	for(int i=m_scan.bbi; i<m_nBB; i++){
-		if(_BitScanForward64(&posInBB,m_aBB[i])){
-			m_scan.bbi=i;
-			m_aBB[i]&=~Tables::mask[posInBB];					//Deleting before the return
-			bbN_del.m_aBB[i]&=~Tables::mask[posInBB];
-			nBB=i;
-			return (posInBB+WMUL(i));
-		}
-	}
-	
-return EMPTY_ELEM;  
-}
-	
-inline int BBIntrin::lsbn64() const{
-	unsigned long posBB;
-	for(int i=0; i<m_nBB; i++){
-		if(_BitScanForward64(&posBB, m_aBB[i]))
-			return(posBB+ WMUL(i));	
-	}
-return EMPTY_ELEM;
-}
-
-#ifdef POPCOUNT_64
-inline int BBIntrin::popcn64() const{
-	BITBOARD pc=0;
-	for(int i=0; i<m_nBB; i++){
-		pc+=__popcnt64(m_aBB[i]);
-	}
-return pc;
-}
-
-
-inline int BBIntrin::popcn64(int nBit) const{
-/////////////////////////
-// Population size from nBit(included) onwards
-	
-	BITBOARD pc=0;
-	
-	int nBB=WDIV(nBit);
-	for(int i=nBB+1; i<m_nBB; i++){
-		pc+=__popcnt64(m_aBB[i]);
-	}
-
-	//special case of nBit bit block
-	BITBOARD bb=m_aBB[nBB]&~Tables::mask_right[WMOD(nBit)];
-	pc+=__popcnt64(bb);
-
-return pc;
-}
-
-#endif
 
 
 

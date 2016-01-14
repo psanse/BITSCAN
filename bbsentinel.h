@@ -83,13 +83,15 @@ virtual	bool is_empty				(int nBBL, int nBBH) const;					//is empty in range
 // bit scanning operations 
 
 virtual	int init_scan(scan_types sct);
+
+#ifdef POPCOUNT_64
 virtual inline int previous_bit_del();							//**TODO- empty bitstring
 virtual inline	int next_bit_del ();
 virtual inline	int next_bit_del (BBSentinel& bbN_del);
 	
 virtual inline	int next_bit();
 virtual inline	int next_bit(int& nBB);
-
+#endif
 protected:	
 	 int m_BBH;										//explicit storage for sentinel high index
 	 int m_BBL;										//explicit storage for sentinel low index
