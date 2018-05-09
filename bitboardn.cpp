@@ -332,7 +332,7 @@ void BitBoardN::to_vector(vector<int>& vl ) const {
 BitBoardN& BitBoardN::operator =  (const BitBoardN& bbN){
 	if(m_nBB!=bbN.m_nBB){
 		//allocates memory
-		init(bbN.m_nBB,false);		
+		init(bbN.m_nBB * 64,false);		
 	}
 
 	for(int i=0; i<m_nBB; i++)
