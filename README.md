@@ -1,5 +1,4 @@
-[![Build Status](https://webapi.biicode.com/v1/badges/pablodev/pablodev/bitscan/master)](https://www.biicode.com/pablodev/bitscan) 
-
+BITSCAN is now integrated in the [BitGraph](https://github.com/psanse/BitGraph) library (14/08/2025) 
 
 BITSCAN
 ===================
