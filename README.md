@@ -1,4 +1,4 @@
-BITSCAN is currently integrated in the [BitGraph](https://github.com/psanse/BitGraph) library for graphs, and being developed there (14/08/2025)
+## **BITSCAN is currently integrated in the [BitGraph](https://github.com/psanse/BitGraph) library for graphs, and being developed there (14/08/2025)**
 
 BITSCAN
 ===================
